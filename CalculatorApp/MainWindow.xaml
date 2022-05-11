@@ -5,8 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CalculatorApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="Calculator" Height="325" Width="250">
+    <StackPanel>
+           <Menu x:Name="Menu">
+               <MenuItem Header="Вид"/>
+               <MenuItem Header="Правка"/>
+               <MenuItem Header="Справка"/>
+           </Menu>
+           <TextBox Height="50" Margin="5 10"/>
+           <Grid Margin="0 10" x:Name="RootLayout">
+               <Grid.RowDefinitions>
+                   <RowDefinition MinHeight="30"/>
+                   <RowDefinition MinHeight="30"/>
+                   <RowDefinition MinHeight="30"/>
+                   <RowDefinition MinHeight="30"/>
+                   <RowDefinition MinHeight="30"/>
+                   <RowDefinition MinHeight="30"/>
+               </Grid.RowDefinitions>
+               <Grid.ColumnDefinitions>
+                   <ColumnDefinition/>
+                   <ColumnDefinition/>
+                   <ColumnDefinition/>
+                   <ColumnDefinition/>
+                   <ColumnDefinition/>
+               </Grid.ColumnDefinitions>
+           </Grid>
+       </StackPanel> 
 </Window>
