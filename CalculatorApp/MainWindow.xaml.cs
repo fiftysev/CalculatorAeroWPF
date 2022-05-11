@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Serialization;
 
 namespace CalculatorApp
 {
@@ -25,6 +26,12 @@ namespace CalculatorApp
             InitUi();
         }
 
+        private void CalcButton_Click(object sender, RoutedEventArgs e)
+        {
+            var b = sender as Button;
+            NumInput.Text += b.Content.ToString();
+        }
+        
         private void InitUi()
         {
             for (var i = 0; i < _buttonsLayout.Length; i++)
@@ -56,6 +63,7 @@ namespace CalculatorApp
                         Grid.SetRowSpan(b, ++prevRowSpan);
                     }
 
+                    b.Click += CalcButton_Click;
                     RootLayout.Children.Add(b);
                 }
             }
