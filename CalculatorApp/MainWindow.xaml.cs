@@ -45,7 +45,7 @@ namespace CalculatorApp
                     var b = new Button
                     {
                         Content = _buttonsLayout[i][j],
-                        Margin = new Thickness(2.5)
+                        Margin = new Thickness(2.5),
                     };
                     
                     Grid.SetRow(b, i);

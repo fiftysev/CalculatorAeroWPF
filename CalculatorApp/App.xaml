@@ -4,5 +4,6 @@
              xmlns:local="clr-namespace:CalculatorApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <ResourceDictionary Source="/PresentationFramework.Aero;component/themes/aero.normalcolor.xaml" />
     </Application.Resources>
 </Application>
