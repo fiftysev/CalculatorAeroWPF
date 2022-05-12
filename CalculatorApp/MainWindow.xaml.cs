@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Serialization;
@@ -19,8 +20,8 @@ namespace CalculatorApp
             new string[] {"1", "2", "3", "-", "="},
             new string[] {"0", "0", ".", "+", "="}
         };
-
-        private CalculatorController _controller;
+        private readonly CalculatorController _controller;
+        private CalculatorState _state;
 
         public MainWindow()
         {
@@ -32,7 +33,8 @@ namespace CalculatorApp
         private void CalcButton_Click(object sender, RoutedEventArgs e)
         {
             var b = sender as Button;
-            _controller.DispatchAction(b.Content.ToString());
+            _controller.DispatchAction(b.Content.ToString(), ref _state);
+            NumInput.Text = _state.CurrentInput;
         }
         
         private void InitUi()

@@ -1,15 +1,12 @@
-﻿namespace CalculatorApp
-{
-    public enum OperationType
-    {
-        SingleOperand,
-        TwoOperands,
-        UpdateInput,
-        MemoryOperation
-    };
+﻿using System.Collections.Generic;
 
-        public struct CalculatorState
+namespace CalculatorApp
+{
+    public struct CalculatorState
     {
-        
+        public double LeftOperand;
+        public string RightOperand;
+        public string Operation;
+        public string CurrentInput;
     }
 }

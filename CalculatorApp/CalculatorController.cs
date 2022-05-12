@@ -1,55 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
-using TFunc =
-    System.Func<System.Collections.Generic.IDictionary<string, object>,
-        System.Collections.Generic.IDictionary<string, object>>;
 
 
 namespace CalculatorApp
 {
     public class CalculatorController
     {
-        private string _inputBuffer;
-        private Stack<double> _operandStack = new Stack<double>(5);
-        private Stack<string> _actionStack = new Stack<string>(5);
-        public void DispatchAction(string action)
+        public void DispatchAction(string action, ref CalculatorState state)
         {
-            if (double.TryParse(action, out var num))
+            if (double.TryParse(action, NumberStyles.Float, CultureInfo.InvariantCulture, out var num))
             {
-                _inputBuffer += action;
+                state.RightOperand += action;
+                state.CurrentInput = state.RightOperand;
+            }
+
+            else if (action == ".")
+            {
+                state.RightOperand =
+                    state.RightOperand.Contains(".") ? state.RightOperand : state.RightOperand + action;
+                state.CurrentInput = state.RightOperand;
             }
             
             else if ("+-/*".Contains(action))
             {
-               
+                if (string.IsNullOrEmpty(state.Operation))
+                {
+                    double.TryParse(state.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture, out var leftOp);
+                    state.LeftOperand = leftOp;
+                    state.RightOperand = "";
+                    state.Operation = action;
+                    state.CurrentInput = action;
+                }
+                else
+                {
+                    DispatchBinaryAction(ref state, state.Operation);
+                    state.Operation = action;
+                    state.RightOperand = "";
+                }
             }
-            else if ("√±1/x".Contains(action)) DispatchUnaryAction(action);
+            else if ("√±1/x=".Contains(action)) DispatchUnaryAction(ref state, action);
             else if (action.Contains("C")) DispatchInputAction(action);
             else if (action.Contains("M")) DispatchMemoryAction(action);
-            return;
         }
 
-        private void DispatchBinaryAction(in string action, in double first = 0, in double second = 0)
+        private void DispatchBinaryAction(ref CalculatorState s, in string action)
         {
+            
+            double res = 0;
+            double first = s.LeftOperand;
+            double second = double.Parse(s.RightOperand, CultureInfo.InvariantCulture);
             switch (action)
-            {
-                case "+":
-                    break;
+            { 
+                case "+": 
+                    res = first + second;
+                    break; 
                 case "-":
+                    res = first - second; 
                     break;
                 case "*":
+                    res = first * second;
                     break;
                 case "/":
+                    res = first / second;
                     break;
                 case "%":
+                    res = first % second;
                     break;
                 default:
                     break;
             }
+            s.LeftOperand = res;
+            s.CurrentInput = res.ToString(CultureInfo.InvariantCulture);
         }
 
-        private void DispatchUnaryAction(in string action, in double operand = 0)
+        private void DispatchUnaryAction(ref CalculatorState s, in string action, in double operand = 0)
         {
             switch (action)
             {
@@ -58,6 +87,9 @@ namespace CalculatorApp
                 case "√":
                     break;
                 case "±":
+                    break;
+                case "=":
+                    
                     break;
                 default:
                     break;
