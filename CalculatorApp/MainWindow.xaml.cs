@@ -20,8 +20,11 @@ namespace CalculatorApp
             new string[] {"0", "0", ".", "+", "="}
         };
 
+        private CalculatorController _controller;
+
         public MainWindow()
         {
+            _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
         }
@@ -29,7 +32,7 @@ namespace CalculatorApp
         private void CalcButton_Click(object sender, RoutedEventArgs e)
         {
             var b = sender as Button;
-            NumInput.Text += b.Content.ToString();
+            _controller.DispatchAction(b.Content.ToString());
         }
         
         private void InitUi()
