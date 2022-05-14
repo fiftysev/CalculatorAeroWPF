@@ -15,4 +15,10 @@ namespace CalculatorApp
         public string Value;
         public bool IsModifiedByUnary;
     }
+
+    public struct LastOperationHistory
+    {
+        public string Operand;
+        public string Operation;
+    }
 }

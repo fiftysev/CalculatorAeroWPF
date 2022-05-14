@@ -17,6 +17,7 @@ namespace CalculatorApp
                     s.RightOperand = "";
                     s.CurrentInput.IsModifiedByUnary = false;
                 }
+
                 s.RightOperand += action;
                 s.CurrentInput.Value = s.RightOperand;
             }
@@ -32,45 +33,27 @@ namespace CalculatorApp
             {
                 if (string.IsNullOrEmpty(s.Operation))
                 {
-                    if (!double.IsNaN(s.LeftOperand))
-                    {
-                        s.RightOperand = "";
-                        s.Operation = action;
-                        s.CurrentInput.Value = action;
-                    }
-                    else
-                    {
-                        double.TryParse(s.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture,
-                        out var leftOp);
-                        s.LeftOperand = leftOp;
-                        s.RightOperand = "";
-                        s.Operation = action;
-                        s.CurrentInput.Value = action;
-                    }
+                    s.RightOperand = "";
+                    s.Operation = action;
+                    s.CurrentInput.Value = action;
+                    if (double.IsNaN(s.LeftOperand)) double.TryParse(s.RightOperand, 
+                        NumberStyles.Float, 
+                        CultureInfo.InvariantCulture,
+                        out s.LeftOperand);
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(s.RightOperand))
-                    {
-                        s.Operation = action;
-                        s.CurrentInput.Value = action;
-                    }
+                    s.Operation = action;
+                    if (string.IsNullOrEmpty(s.RightOperand)) s.CurrentInput.Value = action;
                     else
                     {
                         DispatchBinaryAction(ref s, s.Operation);
-                        s.Operation = action;
                         s.RightOperand = "";
                     }
                 }
             }
-            else if ("√±1/x".Contains(action))
-            {
-                DispatchUnaryAction(ref s, action);
-            }
-            else if ("=".Contains(action))
-            {
-                DispatchUnaryAction(ref s, action);
-            }
+            else if ("√±1/x".Contains(action)) DispatchUnaryAction(ref s, action);
+            else if ("=".Contains(action)) DispatchUnaryAction(ref s, action);
             else if (action.Contains("C")) DispatchInputAction(ref s, action);
             else if (action.Contains("M")) DispatchMemoryAction(ref s, action);
         }
@@ -147,7 +130,7 @@ namespace CalculatorApp
             switch (action)
             {
                 case "C":
-                    s = new CalculatorState { LeftOperand = double.NaN};
+                    s = new CalculatorState { LeftOperand = double.NaN };
                     break;
                 case "CE":
                     s.RightOperand = "";
