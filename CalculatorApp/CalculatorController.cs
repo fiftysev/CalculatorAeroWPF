@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
@@ -55,7 +56,7 @@ namespace CalculatorApp
             switch (Utils.TypesMap[payload])
             {
                 case Utils.CalculatorOperationType.Digit:
-                    if (s.RightOperand.Equals("0")) s.RightOperand = payload;
+                    if (s.RightOperand is null || s.RightOperand.Equals(null)) s.RightOperand = payload;
                     else s.RightOperand += payload;
                     s.CurrentInput.Value = s.RightOperand;
                     break;
@@ -64,10 +65,15 @@ namespace CalculatorApp
                     s.CurrentInput.Value = s.RightOperand;
                     break;
                 case Utils.CalculatorOperationType.Binary:
+                    if (s.RightOperand is null)
+                    {
+                        s.Operations.Push(payload);
+                        return;
+                    } 
                     s.Operands.Push(s.RightOperand);
-                    if (s.Operations.Count != 0) DispatchBinaryAction(ref s, s.Operations.Pop());
+                    if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.Operations.Pop());
                     s.Operations.Push(payload);
-                    s.RightOperand = "0";
+                    s.RightOperand = null;
                     break;
                 case Utils.CalculatorOperationType.Unary:
                     break;
