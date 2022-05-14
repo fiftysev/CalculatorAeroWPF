@@ -22,6 +22,7 @@
                <MenuItem Header="Правка"/>
                <MenuItem Header="Справка"/>
            </Menu>
+           <Label x:Name="History" HorizontalAlignment="Right"/> 
            <TextBox 
                x:Name="NumInput" 
                Height="50"

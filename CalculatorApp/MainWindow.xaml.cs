@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Serialization;
@@ -26,6 +28,7 @@ namespace CalculatorApp
         public MainWindow()
         {
             _state.History = new Stack<string>();
+            _state.LeftOperand = Double.NaN;
             _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
@@ -36,6 +39,7 @@ namespace CalculatorApp
             var b = sender as Button;
             _controller.DispatchAction(b.Content.ToString(), ref _state);
             NumInput.Text = _state.CurrentInput;
+            History.Content = string.Join(" ", _state.History.Reverse());
         }
         
         private void InitUi()

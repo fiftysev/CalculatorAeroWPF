@@ -5,40 +5,58 @@ namespace CalculatorApp
 {
     public class CalculatorController
     {
-        public void DispatchAction(string action, ref CalculatorState state)
+        public void DispatchAction(string action, ref CalculatorState s)
         {
+            s.History.Push(action);
             if (double.TryParse(action, NumberStyles.Float, CultureInfo.InvariantCulture, out var num))
             {
-                state.RightOperand += action;
-                state.CurrentInput = state.RightOperand;
+                s.RightOperand += action;
+                s.CurrentInput = s.RightOperand;
             }
 
             else if (action == ".")
             {
-                state.RightOperand =
-                    state.RightOperand.Contains(".") ? state.RightOperand : state.RightOperand + action;
-                state.CurrentInput = state.RightOperand;
+                s.RightOperand =
+                    s.RightOperand.Contains(".") ? s.RightOperand : s.RightOperand + action;
+                s.CurrentInput = s.RightOperand;
             }
 
             else if ("+-/*".Contains(action))
             {
-                if (string.IsNullOrEmpty(state.Operation))
+                if (string.IsNullOrEmpty(s.Operation))
                 {
-                    double.TryParse(state.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture,
+                    if (!double.IsNaN(s.LeftOperand))
+                    {
+                        s.RightOperand = "";
+                        s.Operation = action;
+                        s.CurrentInput = action;
+                    }
+                    else
+                    {
+                        double.TryParse(s.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture,
                         out var leftOp);
-                    state.LeftOperand = leftOp;
-                    state.RightOperand = "";
-                    state.Operation = action;
-                    state.CurrentInput = action;
+                        s.LeftOperand = leftOp;
+                        s.RightOperand = "";
+                        s.Operation = action;
+                        s.CurrentInput = action;
+                    }
                 }
                 else
                 {
-                    DispatchBinaryAction(ref state, state.Operation);
-                    state.Operation = action;
-                    state.RightOperand = "";
+                    if (s.Operation.Equals(action) || string.IsNullOrEmpty(s.RightOperand))
+                    {
+                        s.Operation = action;
+                        s.CurrentInput = action;
+                    }
+                    else
+                    {
+                        DispatchBinaryAction(ref s, s.Operation);
+                        s.Operation = action;
+                        s.RightOperand = "";
+                    }
                 }
             }
-            else if ("√±1/x=".Contains(action)) DispatchUnaryAction(ref state, action);
+            else if ("√±1/x=".Contains(action)) DispatchUnaryAction(ref s, action);
             else if (action.Contains("C")) DispatchInputAction(action);
             else if (action.Contains("M")) DispatchMemoryAction(action);
         }
@@ -46,8 +64,8 @@ namespace CalculatorApp
         private static void DispatchBinaryAction(ref CalculatorState s, in string action)
         {
             double res = 0;
-            double first = s.LeftOperand;
-            double second = double.Parse(s.RightOperand, CultureInfo.InvariantCulture);
+            var first = s.LeftOperand;
+            var second = double.Parse(s.RightOperand, CultureInfo.InvariantCulture);
             switch (action)
             {
                 case "+":
@@ -85,8 +103,6 @@ namespace CalculatorApp
                     if (string.IsNullOrEmpty(s.RightOperand))
                         s.RightOperand = s.LeftOperand.ToString(CultureInfo.InvariantCulture);
                     DispatchBinaryAction(ref s, s.Operation);
-                    s.Operation = "";
-                    s.RightOperand = s.CurrentInput;
                     break;
             }
         }
