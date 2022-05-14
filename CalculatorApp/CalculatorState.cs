@@ -7,6 +7,8 @@ namespace CalculatorApp
         public double LeftOperand;
         public string RightOperand;
         public string Operation;
+        public Stack<string> Operands;
+        public Stack<string> Operations;
         public InputState CurrentInput;
     }
 
@@ -16,9 +18,4 @@ namespace CalculatorApp
         public bool IsModifiedByUnary;
     }
 
-    public struct LastOperationHistory
-    {
-        public string Operand;
-        public string Operation;
-    }
 }

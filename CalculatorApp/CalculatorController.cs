@@ -10,14 +10,14 @@ namespace CalculatorApp
     {
         public void DispatchAction(string action, ref CalculatorState s)
         {
-            if (char.IsDigit(action[0]))
+            if (int.TryParse(action, out var num))
             {
                 if (s.CurrentInput.IsModifiedByUnary)
                 {
                     s.RightOperand = "";
                     s.CurrentInput.IsModifiedByUnary = false;
                 }
-
+                
                 s.RightOperand += action;
                 s.CurrentInput.Value = s.RightOperand;
             }
@@ -33,24 +33,18 @@ namespace CalculatorApp
             {
                 if (string.IsNullOrEmpty(s.Operation))
                 {
-                    s.RightOperand = "";
-                    s.Operation = action;
-                    s.CurrentInput.Value = action;
                     if (double.IsNaN(s.LeftOperand)) double.TryParse(s.RightOperand, 
-                        NumberStyles.Float, 
+                        NumberStyles.Number,
                         CultureInfo.InvariantCulture,
                         out s.LeftOperand);
+                    s.Operation = action;
                 }
                 else
                 {
                     s.Operation = action;
-                    if (string.IsNullOrEmpty(s.RightOperand)) s.CurrentInput.Value = action;
-                    else
-                    {
-                        DispatchBinaryAction(ref s, s.Operation);
-                        s.RightOperand = "";
-                    }
+                    DispatchBinaryAction(ref s, s.Operation);
                 }
+                s.RightOperand = "";
             }
             else if ("√±1/x".Contains(action)) DispatchUnaryAction(ref s, action);
             else if ("=".Contains(action)) DispatchUnaryAction(ref s, action);
@@ -62,7 +56,7 @@ namespace CalculatorApp
         {
             double res = 0;
             var first = s.LeftOperand;
-            var second = double.Parse(s.RightOperand, CultureInfo.InvariantCulture);
+            double.TryParse(s.RightOperand, NumberStyles.Number, CultureInfo.InvariantCulture, out var second);
             switch (action)
             {
                 case "+":
@@ -104,6 +98,7 @@ namespace CalculatorApp
                     if (string.IsNullOrEmpty(s.RightOperand))
                         s.RightOperand = s.LeftOperand.ToString(CultureInfo.InvariantCulture);
                     DispatchBinaryAction(ref s, s.Operation);
+                    s.RightOperand = "";
                     return;
             }
         }

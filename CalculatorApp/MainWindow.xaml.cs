@@ -27,8 +27,9 @@ namespace CalculatorApp
 
         public MainWindow()
         {
-            _state.LeftOperand = Double.NaN;
-            _state.RightOperand = "0";
+            _state.Operations = new Stack<string>();
+            _state.Operands = new Stack<string>();
+            _state.LeftOperand = double.NaN;
             _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
