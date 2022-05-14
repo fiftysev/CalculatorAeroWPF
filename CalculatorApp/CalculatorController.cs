@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 
 namespace CalculatorApp
@@ -10,15 +12,20 @@ namespace CalculatorApp
             s.History.Push(action);
             if (double.TryParse(action, NumberStyles.Float, CultureInfo.InvariantCulture, out var num))
             {
+                if (s.CurrentInput.IsModifiedByUnary)
+                {
+                    s.RightOperand = "";
+                    s.CurrentInput.IsModifiedByUnary = false;
+                }
                 s.RightOperand += action;
-                s.CurrentInput = s.RightOperand;
+                s.CurrentInput.Value = s.RightOperand;
             }
 
             else if (action == ".")
             {
                 s.RightOperand =
                     s.RightOperand.Contains(".") ? s.RightOperand : s.RightOperand + action;
-                s.CurrentInput = s.RightOperand;
+                s.CurrentInput.Value = s.RightOperand;
             }
 
             else if ("+-/*".Contains(action))
@@ -29,7 +36,7 @@ namespace CalculatorApp
                     {
                         s.RightOperand = "";
                         s.Operation = action;
-                        s.CurrentInput = action;
+                        s.CurrentInput.Value = action;
                     }
                     else
                     {
@@ -38,15 +45,15 @@ namespace CalculatorApp
                         s.LeftOperand = leftOp;
                         s.RightOperand = "";
                         s.Operation = action;
-                        s.CurrentInput = action;
+                        s.CurrentInput.Value = action;
                     }
                 }
                 else
                 {
-                    if (s.Operation.Equals(action) || string.IsNullOrEmpty(s.RightOperand))
+                    if (string.IsNullOrEmpty(s.RightOperand))
                     {
                         s.Operation = action;
-                        s.CurrentInput = action;
+                        s.CurrentInput.Value = action;
                     }
                     else
                     {
@@ -57,8 +64,8 @@ namespace CalculatorApp
                 }
             }
             else if ("√±1/x=".Contains(action)) DispatchUnaryAction(ref s, action);
-            else if (action.Contains("C")) DispatchInputAction(action);
-            else if (action.Contains("M")) DispatchMemoryAction(action);
+            else if (action.Contains("C")) DispatchInputAction(ref s, action);
+            else if (action.Contains("M")) DispatchMemoryAction(ref s, action);
         }
 
         private static void DispatchBinaryAction(ref CalculatorState s, in string action)
@@ -86,28 +93,40 @@ namespace CalculatorApp
             }
 
             s.LeftOperand = res;
-            s.CurrentInput = res.ToString(CultureInfo.InvariantCulture);
+            s.CurrentInput.Value = res.ToString(CultureInfo.InvariantCulture);
         }
 
         private static void DispatchUnaryAction(ref CalculatorState s, in string action)
         {
+            double res = 0;
+            if (!double.TryParse(s.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture, out var operand))
+            {
+                operand = 0;
+            };
             switch (action)
             {
                 case "1/x":
+                    res = 1 / operand;
                     break;
                 case "√":
+                    res = Math.Sqrt(operand);
                     break;
                 case "±":
+                    res = -operand;
                     break;
                 case "=":
                     if (string.IsNullOrEmpty(s.RightOperand))
                         s.RightOperand = s.LeftOperand.ToString(CultureInfo.InvariantCulture);
                     DispatchBinaryAction(ref s, s.Operation);
-                    break;
+                    return;
             }
+
+            s.RightOperand = res.ToString(CultureInfo.InvariantCulture);
+            s.CurrentInput.Value = s.RightOperand;
+            s.CurrentInput.IsModifiedByUnary = true;
         }
 
-        private static void DispatchMemoryAction(in string action)
+        private static void DispatchMemoryAction(ref CalculatorState s, in string action)
         {
             switch (action)
             {
@@ -124,7 +143,7 @@ namespace CalculatorApp
             }
         }
 
-        private static void DispatchInputAction(in string action)
+        private static void DispatchInputAction(ref CalculatorState s, in string action)
         {
             switch (action)
             {

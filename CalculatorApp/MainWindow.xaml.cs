@@ -38,7 +38,7 @@ namespace CalculatorApp
         {
             var b = sender as Button;
             _controller.DispatchAction(b.Content.ToString(), ref _state);
-            NumInput.Text = _state.CurrentInput;
+            NumInput.Text = _state.CurrentInput.Value;
             History.Content = string.Join(" ", _state.History.Reverse());
         }
         
