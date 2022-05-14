@@ -20,7 +20,7 @@ namespace CalculatorApp
             new string[] {"7", "8", "9", "/", "%"},
             new string[] {"4", "5", "6", "*", "1/x"},
             new string[] {"1", "2", "3", "-", "="},
-            new string[] {"0", "0", ".", "+", "="}
+            new string[] {"0", "0", ",", "+", "="}
         };
         private readonly CalculatorController _controller;
         private CalculatorState _state;
@@ -30,6 +30,7 @@ namespace CalculatorApp
             _state.Operations = new Stack<string>();
             _state.Operands = new Stack<string>();
             _state.LeftOperand = double.NaN;
+            _state.RightOperand = "0";
             _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
@@ -38,7 +39,8 @@ namespace CalculatorApp
         private void CalcButton_Click(object sender, RoutedEventArgs e)
         {
             var b = sender as Button;
-            _controller.DispatchAction(b.Content.ToString(), ref _state);
+            string content = b.Content.ToString();
+            _controller.Dispatcher(ref _state, content);
             NumInput.Text = _state.CurrentInput.Value;
         }
         
