@@ -8,5 +8,6 @@ namespace CalculatorApp
         public string RightOperand;
         public string Operation;
         public string CurrentInput;
+        public Stack<string> History;
     }
 }

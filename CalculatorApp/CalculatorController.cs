@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Globalization;
 
 
 namespace CalculatorApp
@@ -25,12 +19,13 @@ namespace CalculatorApp
                     state.RightOperand.Contains(".") ? state.RightOperand : state.RightOperand + action;
                 state.CurrentInput = state.RightOperand;
             }
-            
+
             else if ("+-/*".Contains(action))
             {
                 if (string.IsNullOrEmpty(state.Operation))
                 {
-                    double.TryParse(state.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture, out var leftOp);
+                    double.TryParse(state.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture,
+                        out var leftOp);
                     state.LeftOperand = leftOp;
                     state.RightOperand = "";
                     state.Operation = action;
@@ -48,19 +43,18 @@ namespace CalculatorApp
             else if (action.Contains("M")) DispatchMemoryAction(action);
         }
 
-        private void DispatchBinaryAction(ref CalculatorState s, in string action)
+        private static void DispatchBinaryAction(ref CalculatorState s, in string action)
         {
-            
             double res = 0;
             double first = s.LeftOperand;
             double second = double.Parse(s.RightOperand, CultureInfo.InvariantCulture);
             switch (action)
-            { 
-                case "+": 
+            {
+                case "+":
                     res = first + second;
-                    break; 
+                    break;
                 case "-":
-                    res = first - second; 
+                    res = first - second;
                     break;
                 case "*":
                     res = first * second;
@@ -71,14 +65,13 @@ namespace CalculatorApp
                 case "%":
                     res = first % second;
                     break;
-                default:
-                    break;
             }
+
             s.LeftOperand = res;
             s.CurrentInput = res.ToString(CultureInfo.InvariantCulture);
         }
 
-        private void DispatchUnaryAction(ref CalculatorState s, in string action, in double operand = 0)
+        private static void DispatchUnaryAction(ref CalculatorState s, in string action)
         {
             switch (action)
             {
@@ -89,14 +82,16 @@ namespace CalculatorApp
                 case "±":
                     break;
                 case "=":
-                    
-                    break;
-                default:
+                    if (string.IsNullOrEmpty(s.RightOperand))
+                        s.RightOperand = s.LeftOperand.ToString(CultureInfo.InvariantCulture);
+                    DispatchBinaryAction(ref s, s.Operation);
+                    s.Operation = "";
+                    s.RightOperand = s.CurrentInput;
                     break;
             }
         }
 
-        private void DispatchMemoryAction(in string action)
+        private static void DispatchMemoryAction(in string action)
         {
             switch (action)
             {
@@ -110,12 +105,10 @@ namespace CalculatorApp
                     break;
                 case "M-":
                     break;
-                default:
-                    break;
             }
         }
 
-        private void DispatchInputAction(in string action)
+        private static void DispatchInputAction(in string action)
         {
             switch (action)
             {

@@ -25,6 +25,7 @@ namespace CalculatorApp
 
         public MainWindow()
         {
+            _state.History = new Stack<string>();
             _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
