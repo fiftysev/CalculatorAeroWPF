@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 
 namespace CalculatorApp
@@ -9,8 +10,7 @@ namespace CalculatorApp
     {
         public void DispatchAction(string action, ref CalculatorState s)
         {
-            s.History.Push(action);
-            if (double.TryParse(action, NumberStyles.Float, CultureInfo.InvariantCulture, out var num))
+            if (char.IsDigit(action[0]))
             {
                 if (s.CurrentInput.IsModifiedByUnary)
                 {
@@ -63,7 +63,14 @@ namespace CalculatorApp
                     }
                 }
             }
-            else if ("√±1/x=".Contains(action)) DispatchUnaryAction(ref s, action);
+            else if ("√±1/x".Contains(action))
+            {
+                DispatchUnaryAction(ref s, action);
+            }
+            else if ("=".Contains(action))
+            {
+                DispatchUnaryAction(ref s, action);
+            }
             else if (action.Contains("C")) DispatchInputAction(ref s, action);
             else if (action.Contains("M")) DispatchMemoryAction(ref s, action);
         }
@@ -99,20 +106,16 @@ namespace CalculatorApp
         private static void DispatchUnaryAction(ref CalculatorState s, in string action)
         {
             double res = 0;
-            if (!double.TryParse(s.RightOperand, NumberStyles.Float, CultureInfo.InvariantCulture, out var operand))
-            {
-                operand = 0;
-            };
             switch (action)
             {
                 case "1/x":
-                    res = 1 / operand;
+                    res = 1 / s.LeftOperand;
                     break;
                 case "√":
-                    res = Math.Sqrt(operand);
+                    res = Math.Sqrt(s.LeftOperand);
                     break;
                 case "±":
-                    res = -operand;
+                    res = -s.LeftOperand;
                     break;
                 case "=":
                     if (string.IsNullOrEmpty(s.RightOperand))
@@ -120,10 +123,6 @@ namespace CalculatorApp
                     DispatchBinaryAction(ref s, s.Operation);
                     return;
             }
-
-            s.RightOperand = res.ToString(CultureInfo.InvariantCulture);
-            s.CurrentInput.Value = s.RightOperand;
-            s.CurrentInput.IsModifiedByUnary = true;
         }
 
         private static void DispatchMemoryAction(ref CalculatorState s, in string action)
@@ -148,8 +147,11 @@ namespace CalculatorApp
             switch (action)
             {
                 case "C":
+                    s = new CalculatorState { LeftOperand = double.NaN};
                     break;
                 case "CE":
+                    s.RightOperand = "";
+                    s.CurrentInput.Value = s.RightOperand;
                     break;
             }
         }

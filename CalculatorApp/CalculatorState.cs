@@ -8,7 +8,6 @@ namespace CalculatorApp
         public string RightOperand;
         public string Operation;
         public InputState CurrentInput;
-        public Stack<string> History;
     }
 
     public struct InputState
