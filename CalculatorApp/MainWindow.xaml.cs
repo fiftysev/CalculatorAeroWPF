@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Serialization;
 
 namespace CalculatorApp
 {
@@ -22,16 +18,13 @@ namespace CalculatorApp
             new string[] {"1", "2", "3", "-", "="},
             new string[] {"0", "0", ",", "+", "="}
         };
-        private readonly CalculatorController _controller;
         private CalculatorState _state;
 
         public MainWindow()
         {
             _state.Operations = new Stack<string>();
             _state.Operands = new Stack<string>();
-            _state.LeftOperand = double.NaN;
             _state.RightOperand = "0";
-            _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
         }
@@ -40,7 +33,7 @@ namespace CalculatorApp
         {
             var b = sender as Button;
             string content = b.Content.ToString();
-            _controller.Dispatcher(ref _state, content);
+            CalculatorController.Dispatcher(ref _state, content);
             NumInput.Text = _state.CurrentInput.Value;
         }
         

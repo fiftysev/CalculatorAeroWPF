@@ -8,9 +8,9 @@ using System.Net.Sockets;
 
 namespace CalculatorApp
 {
-    public class CalculatorController
+    public static class CalculatorController
     {
-        public void DispatchAction(string action, ref CalculatorState s)
+        public static void DispatchAction(string action, ref CalculatorState s)
         {
             if (int.TryParse(action, out var num))
             {
@@ -51,16 +51,17 @@ namespace CalculatorApp
             else if (action.Contains("M")) DispatchMemoryAction(ref s, action);
         }
 
-        public void Dispatcher(ref CalculatorState s, string payload)
+        public static void Dispatcher(ref CalculatorState s, string payload)
         {
             switch (Utils.TypesMap[payload])
             {
                 case Utils.CalculatorOperationType.Digit:
-                    if (s.RightOperand is null || s.RightOperand.Equals(null)) s.RightOperand = payload;
+                    if (s.RightOperand is null || s.RightOperand.Equals("0")) s.RightOperand = payload;
                     else s.RightOperand += payload;
                     s.CurrentInput.Value = s.RightOperand;
                     break;
                 case Utils.CalculatorOperationType.FloatingPoint:
+                    if (s.RightOperand is null) s.RightOperand = "0";
                     s.RightOperand = s.RightOperand.Contains(payload) ? s.RightOperand : s.RightOperand + payload;
                     s.CurrentInput.Value = s.RightOperand;
                     break;

@@ -30,6 +30,7 @@
                VerticalContentAlignment="Bottom"
                FontSize="18"
                Margin="10 2.5" 
+               Text="0"
                IsReadOnly="True"/>
            <Grid MinWidth="200" MinHeight="200" Margin="7.5" x:Name="RootLayout">
                <Grid.RowDefinitions>
