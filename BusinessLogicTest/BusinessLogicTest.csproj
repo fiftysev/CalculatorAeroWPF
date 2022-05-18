@@ -42,6 +42,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="BinaryOperations.cs" />
         <Compile Include="Digits.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
