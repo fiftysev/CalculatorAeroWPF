@@ -135,21 +135,51 @@ namespace BusinessLogicTest
         [Test]
         public void WithOutput()
         {
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "+");
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "=");
+
+            Assert.AreEqual("6", s.Operands.Peek());
+            Assert.IsEmpty(s.Operations);
+            Assert.AreEqual("6", s.CurrentInput.Value.ToString());
+            Assert.IsNull(s.RightOperand);
         }
 
         [Test]
         public void WithOutputWithOperationChanging()
         {
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "+");
+            CalculatorController.Dispatcher(ref s, "/");
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "=");
+
+            Assert.AreEqual("1", s.Operands.Peek());
+            Assert.IsEmpty(s.Operations);
+            Assert.AreEqual("1", s.CurrentInput.Value.ToString());
+            Assert.IsNull(s.RightOperand);
         }
 
         [Test]
         public void ManyOperationsWithOutput()
         {
-        }
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "+");
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "=");
 
-        [Test]
-        public void WithOutputTwoOperationsWithOperationChanging()
-        {
+            Assert.AreEqual("6", s.Operands.Peek());
+            Assert.IsEmpty(s.Operations);
+            Assert.AreEqual("6", s.CurrentInput.Value.ToString());
+            Assert.IsNull(s.RightOperand);
+            
+            CalculatorController.Dispatcher(ref s, "*");
+            CalculatorController.Dispatcher(ref s, "2");
+            CalculatorController.Dispatcher(ref s, "=");
+            
+            Assert.AreEqual("12", s.Operands.Peek());
+            Assert.IsEmpty(s.Operations);
         }
     }
 }
