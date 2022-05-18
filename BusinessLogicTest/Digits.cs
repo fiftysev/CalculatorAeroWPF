@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using CalculatorApp;
 
@@ -7,10 +8,22 @@ namespace BusinessLogicTest
     [TestFixture]
     public class DigitsAdding
     {
+        private CalculatorState s;
+
+        [SetUp]
+        public void SetUp()
+        {
+            s = new CalculatorState
+            {
+                Operands = new Stack<string>(), 
+                Operations = new Stack<string>(), 
+                RightOperand = "0"
+            };
+        }
+
         [Test]
         public void SingleDigit()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, "1");
             Assert.AreEqual("1", s.RightOperand);
         }
@@ -18,7 +31,6 @@ namespace BusinessLogicTest
         [Test]
         public void ManyDigits()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, "2");
             CalculatorController.Dispatcher(ref s, "3");
             CalculatorController.Dispatcher(ref s, "4");
@@ -28,7 +40,6 @@ namespace BusinessLogicTest
         [Test]
         public void WithSingleFloatingPoint()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, "3");
             CalculatorController.Dispatcher(ref s, ",");
             CalculatorController.Dispatcher(ref s, "4");
@@ -38,16 +49,14 @@ namespace BusinessLogicTest
         [Test]
         public void SingleFloatingPoint()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, ",");
             Assert.AreEqual("0,", s.RightOperand);
         }
-        
+
 
         [Test]
         public void WithManyFloatingPoints()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, "3");
             CalculatorController.Dispatcher(ref s, ",");
             CalculatorController.Dispatcher(ref s, ",");
@@ -59,7 +68,6 @@ namespace BusinessLogicTest
         [Test]
         public void ManyFloatingPoints()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, ",");
             CalculatorController.Dispatcher(ref s, ",");
             CalculatorController.Dispatcher(ref s, ",");
@@ -70,7 +78,6 @@ namespace BusinessLogicTest
         [Test]
         public void WithLeadingZeros()
         {
-            var s = new CalculatorState();
             CalculatorController.Dispatcher(ref s, "0");
             CalculatorController.Dispatcher(ref s, "0");
             CalculatorController.Dispatcher(ref s, "0");
