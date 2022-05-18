@@ -181,5 +181,24 @@ namespace BusinessLogicTest
             Assert.AreEqual("12", s.Operands.Peek());
             Assert.IsEmpty(s.Operations);
         }
+
+        [Test]
+        public void ManyOperationsWithOutputWithoutSecondOperand()
+        {
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "+");
+            CalculatorController.Dispatcher(ref s, "3");
+            CalculatorController.Dispatcher(ref s, "=");
+            
+            Assert.AreEqual("6", s.Operands.Peek());
+            
+            CalculatorController.Dispatcher(ref s, "=");
+            
+            Assert.AreEqual("9", s.Operands.Peek());
+            
+            CalculatorController.Dispatcher(ref s, "=");
+            
+            Assert.AreEqual("12", s.Operands.Peek());
+        }
     }
 }

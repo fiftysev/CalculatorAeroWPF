@@ -26,11 +26,7 @@ namespace CalculatorApp
                         return;
                     } 
                     s.Operands.Push(s.RightOperand);
-                    if (s.Operations.Count != 0 && s.Operands.Count >= 2)
-                    {
-                        DispatchBinaryAction(ref s, s.Operations.Peek());
-                        s.Operations.Clear();
-                    }
+                    if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.Operations.Peek());
                     s.Operations.Push(payload);
                     s.RightOperand = null;
                     break;
@@ -73,6 +69,8 @@ namespace CalculatorApp
             var stringify = res.ToString(CultureInfo.CurrentCulture);
             s.Operands.Push(stringify);
             s.CurrentInput.Value = stringify;
+            s.History.Operand = second.ToString(CultureInfo.CurrentCulture);
+            s.History.Operation = payload;
         }
 
         private static void DispatchUnaryAction(ref CalculatorState s, in string action)
@@ -119,12 +117,14 @@ namespace CalculatorApp
 
         private static void DispatchOutputAction(ref CalculatorState s)
         {
-            if (s.Operands.Count < 2 && s.RightOperand is null) s.Operands.Push(s.Operands.Peek());
-            else s.Operands.Push(s.RightOperand);
+            if (s.Operands.Count < 2 && s.Operands.Count != 0)
+            {
+                if (s.RightOperand is null) s.Operands.Push(string.IsNullOrEmpty(s.History.Operand) ? s.Operands.Peek() : s.History.Operand);
+                else s.Operands.Push(s.RightOperand);
+            }
             if (s.Operations.Count != 0 && s.Operands.Count >= 2)
             {
                 DispatchBinaryAction(ref s, s.Operations.Peek());
-                s.Operations.Clear();
             }
             s.RightOperand = null;
         }
