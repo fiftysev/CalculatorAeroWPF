@@ -1,5 +1,6 @@
-﻿using System.Globalization;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace CalculatorApp
 {
@@ -12,12 +13,12 @@ namespace CalculatorApp
                 case Utils.CalculatorOperationType.Digit:
                     if (s.RightOperand is null || s.RightOperand.Equals("0")) s.RightOperand = payload;
                     else s.RightOperand += payload;
-                    s.CurrentInput.Value = s.RightOperand;
+                    s.CurrentInput = s.RightOperand;
                     break;
                 case Utils.CalculatorOperationType.FloatingPoint:
                     if (s.RightOperand is null) s.RightOperand = "0";
                     s.RightOperand = s.RightOperand.Contains(payload) ? s.RightOperand : s.RightOperand + payload;
-                    s.CurrentInput.Value = s.RightOperand;
+                    s.CurrentInput = s.RightOperand;
                     break;
                 case Utils.CalculatorOperationType.Binary:
                     if (s.RightOperand is null)
@@ -68,7 +69,7 @@ namespace CalculatorApp
 
             var stringify = res.ToString(CultureInfo.CurrentCulture);
             s.Operands.Push(stringify);
-            s.CurrentInput.Value = stringify;
+            s.CurrentInput = stringify;
             s.History.Operand = second.ToString(CultureInfo.CurrentCulture);
             s.History.Operation = payload;
         }
@@ -92,14 +93,19 @@ namespace CalculatorApp
             switch (action)
             {
                 case "MS":
+                    s.Memory = s.CurrentInput;
                     break;
                 case "MR":
+                    s.RightOperand = s.CurrentInput = s.Memory;
                     break;
                 case "MC":
+                    s.Memory = "";
                     break;
                 case "M+":
+                    s.Memory = (Convert.ToDouble(s.Memory) + Convert.ToDouble(s.CurrentInput)).ToString(CultureInfo.CurrentCulture);
                     break;
                 case "M-":
+                    s.Memory = (Convert.ToDouble(s.Memory) - Convert.ToDouble(s.CurrentInput)).ToString(CultureInfo.CurrentCulture);
                     break;
             }
         }
@@ -109,8 +115,12 @@ namespace CalculatorApp
             switch (action)
             {
                 case "C":
+                    s.RightOperand = s.CurrentInput = "0";
                     break;
                 case "CE":
+                    s.RightOperand = s.CurrentInput = "0";
+                    s.Operands.Clear();
+                    s.Operations.Clear();
                     break;
             }
         }
@@ -124,8 +134,9 @@ namespace CalculatorApp
             }
             if (s.Operations.Count != 0 && s.Operands.Count >= 2)
             {
-                DispatchBinaryAction(ref s, s.Operations.Peek());
+                DispatchBinaryAction(ref s, s.History.Operation ?? s.Operations.Peek());
             }
+
             s.RightOperand = null;
         }
     }

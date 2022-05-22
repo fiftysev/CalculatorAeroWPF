@@ -34,7 +34,7 @@ namespace CalculatorApp
             var b = sender as Button;
             string content = b.Content.ToString();
             CalculatorController.Dispatcher(ref _state, content);
-            NumInput.Text = _state.CurrentInput.Value;
+            NumInput.Text = _state.CurrentInput;
         }
         
         private void InitUi()
