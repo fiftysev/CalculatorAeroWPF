@@ -1,5 +1,6 @@
-﻿using System.Globalization;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace CalculatorApp
 {
@@ -20,13 +21,9 @@ namespace CalculatorApp
                     s.CurrentInput.Value = s.RightOperand;
                     break;
                 case Utils.CalculatorOperationType.Binary:
-                    if (s.RightOperand is null)
-                    {
-                        s.Operations.Push(payload);
-                        return;
-                    } 
+                    if (s.RightOperand is null) return;
                     s.Operands.Push(s.RightOperand);
-                    if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.Operations.Peek());
+                    if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.Operations.Pop());
                     s.Operations.Push(payload);
                     s.RightOperand = null;
                     break;
@@ -36,8 +33,10 @@ namespace CalculatorApp
                     DispatchOutputAction(ref s);
                     break;
                 case Utils.CalculatorOperationType.Memory:
+                    DispatchMemoryAction(ref s, payload);
                     break;
                 case Utils.CalculatorOperationType.ClearData:
+                    DispatchClearInputAction(ref s, payload);
                     break;
             }
         }
@@ -73,44 +72,40 @@ namespace CalculatorApp
             s.History.Operation = payload;
         }
 
-        private static void DispatchUnaryAction(ref CalculatorState s, in string action)
-        {
-            double res = 0;
-            switch (action)
-            {
-                case "1/x":
-                    break;
-                case "√":
-                    break;
-                case "±":
-                    break;
-            }
-        }
-
         private static void DispatchMemoryAction(ref CalculatorState s, in string action)
         {
             switch (action)
             {
                 case "MS":
+                    s.Memory = s.CurrentInput.Value;
                     break;
                 case "MR":
+                    s.RightOperand = s.CurrentInput.Value = s.Memory;
                     break;
                 case "MC":
+                    s.Memory = "";
                     break;
                 case "M+":
+                    s.Memory = (Convert.ToDouble(s.Memory) + Convert.ToDouble(s.CurrentInput)).ToString(CultureInfo.CurrentCulture);
                     break;
                 case "M-":
+                    s.Memory = (Convert.ToDouble(s.Memory) - Convert.ToDouble(s.CurrentInput)).ToString(CultureInfo.CurrentCulture);
                     break;
             }
         }
 
-        private static void DispatchInputAction(ref CalculatorState s, in string action)
+        private static void DispatchClearInputAction(ref CalculatorState s, in string action)
         {
             switch (action)
             {
                 case "C":
+                    s.RightOperand = s.CurrentInput.Value = "0";
                     break;
                 case "CE":
+                    s.RightOperand = s.CurrentInput.Value = "0";
+                    s.Operands.Clear();
+                    s.Operations.Clear();
+                    s.History = new History();
                     break;
             }
         }
@@ -122,11 +117,7 @@ namespace CalculatorApp
                 if (s.RightOperand is null) s.Operands.Push(string.IsNullOrEmpty(s.History.Operand) ? s.Operands.Peek() : s.History.Operand);
                 else s.Operands.Push(s.RightOperand);
             }
-            if (s.Operations.Count != 0 && s.Operands.Count >= 2)
-            {
-                DispatchBinaryAction(ref s, s.Operations.Peek());
-            }
-            s.RightOperand = null;
+            if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.History.Operation ?? s.Operations.Pop());
         }
     }
 }

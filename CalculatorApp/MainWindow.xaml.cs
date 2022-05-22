@@ -25,6 +25,7 @@ namespace CalculatorApp
             _state.Operations = new Stack<string>();
             _state.Operands = new Stack<string>();
             _state.RightOperand = "0";
+            _state.History = new History();
             InitializeComponent();
             InitUi();
         }
