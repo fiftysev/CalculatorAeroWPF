@@ -25,14 +25,14 @@
            <Label x:Name="History" HorizontalAlignment="Right"/> 
            <TextBox 
                x:Name="NumInput" 
-               Height="50"
+               Height="60"
                TextAlignment="Right"
                VerticalContentAlignment="Bottom"
                FontSize="22"
-               Margin="10 2.5" 
+               Margin="7.5 2.5 7.5 0" 
                Text="0"
                IsReadOnly="True"/>
-           <Grid MinWidth="200" MinHeight="200" Margin="7.5" x:Name="RootLayout">
+           <Grid MinWidth="200" MinHeight="185" Margin="7.5 2.5 7.5 2.5" x:Name="RootLayout">
                <Grid.RowDefinitions>
                    <RowDefinition />
                    <RowDefinition />

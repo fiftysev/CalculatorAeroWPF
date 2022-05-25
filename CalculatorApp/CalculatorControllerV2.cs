@@ -12,6 +12,12 @@ namespace CalculatorApp
         {
             _s = new CalculatorState();
         }
+
+        public void ResetState()
+        {
+            _s = new CalculatorState();
+        }
+        
         /// <summary>
         /// Main method in controller, does matching of operation from button with BL (like FLUX arch)
         /// </summary>
@@ -99,6 +105,8 @@ namespace CalculatorApp
             double res = 0;
             double.TryParse(num1, out var first);
             double.TryParse(num2, out var second);
+            if (payload.Equals("/") && second.Equals(0))
+                throw new InvalidOperationException("Деление на ноль невозможно");
             res = payload switch
             {
                 "+" => first + second,
@@ -114,6 +122,7 @@ namespace CalculatorApp
         {
             double res = 0;
             double.TryParse(num, out var number);
+            if (payload.Equals("1/x") && number.Equals(0)) throw new InvalidOperationException("Деление на ноль невозможно");
             res = payload switch
             {
                 "√" => Math.Sqrt(number),
