@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CalculatorApp
+﻿namespace CalculatorApp
 {
     public struct CalculatorState
     {
         public Operand Input;
         public Operand Buffer;
         public string Operation;
-        public Operand UserInput;
+        public string UserInput;
         public string Memory;
         public History History;
     }

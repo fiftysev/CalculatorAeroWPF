@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace CalculatorApp
@@ -11,18 +10,19 @@ namespace CalculatorApp
     {
         private readonly string[][] _buttonsLayout =
         {
-            new string[] {"MC", "MR", "MS", "M+", "M-"},
-            new string[] {"🠔", "CE", "C", "±", "√"},
-            new string[] {"7", "8", "9", "/", "%"},
-            new string[] {"4", "5", "6", "*", "1/x"},
-            new string[] {"1", "2", "3", "-", "="},
-            new string[] {"0", "0", ",", "+", "="}
+            new[] {"MC", "MR", "MS", "M+", "M-"},
+            new[] {"🠔", "CE", "C", "±", "√"},
+            new[] {"7", "8", "9", "/", "%"},
+            new[] {"4", "5", "6", "*", "1/x"},
+            new[] {"1", "2", "3", "-", "="},
+            new[] {"0", "0", ",", "+", "="}
         };
-        private CalculatorState _state;
+
+        private readonly CalculatorController _controller;
 
         public MainWindow()
         {
-            _state.History = new History();
+            _controller = new CalculatorController();
             InitializeComponent();
             InitUi();
         } 
@@ -30,9 +30,9 @@ namespace CalculatorApp
         private void CalcButton_Click(object sender, RoutedEventArgs e)
         {
             var b = sender as Button;
-            string content = b.Content.ToString();
-            CalculatorController.Dispatcher(ref _state, content);
-            NumInput.Text = _state.UserInput.Value;
+            var content = b?.Content.ToString();
+            _controller.Dispatch(content);
+            NumInput.Text = _controller.UiText;
         }
         
         private void InitUi()
