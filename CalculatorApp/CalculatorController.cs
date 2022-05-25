@@ -127,33 +127,34 @@ namespace CalculatorApp
 
         private static void DispatchOutputAction(ref CalculatorState s)
         {
-            switch ((s.Buffer.Value is null, s.Input.Value is null))
+            while (true)
             {
-                case (true, true):
-                    s.UserInput.Value = "0";
-                    break;
-                case (true, false) when !string.IsNullOrEmpty(s.History.Operand):
-                    s.Buffer.Value = s.Input.Value;
-                    s.Input.Value = s.History.Operand;
-                    DispatchOutputAction(ref s);
-                    break;
-                case (true, false):
-                    s.Buffer.Value = s.Input.Value;
-                    DispatchOutputAction(ref s);
-                    break;
-                case (false, false)
-                    when !string.IsNullOrEmpty(s.Operation) || !string.IsNullOrEmpty(s.History.Operation):
-                    var operation = s.Operation ?? s.History.Operation;
-                    if (!s.Input.IsOutput) s.History.Operand = s.Input.Value;
-                    s.Input.Value =
-                        DispatchBinaryAction(s.Buffer.Value, s.Input.Value, operation)
+                switch ((s.Buffer.Value is null, s.Input.Value is null))
+                {
+                    case (true, true):
+                        s.UserInput.Value = "0";
+                        break;
+                    case (true, false) when !string.IsNullOrEmpty(s.History.Operand):
+                        s.Buffer.Value = s.Input.Value;
+                        s.Input.Value = s.History.Operand;
+                        continue;
+                    case (true, false):
+                        s.Buffer.Value = s.Input.Value;
+                        continue;
+                    case (false, false) when !string.IsNullOrEmpty(s.Operation) || !string.IsNullOrEmpty(s.History.Operation):
+                        var operation = s.Operation ?? s.History.Operation;
+                        if (!s.Input.IsOutput) s.History.Operand = s.Input.Value;
+                        s.Input.Value = DispatchBinaryAction(s.Buffer.Value, s.Input.Value, operation)
                             .ToString(CultureInfo.CurrentCulture);
-                    s.History.Operation = operation;
-                    s.UserInput.Value = s.Input.Value;
-                    s.Input.IsOutput = true;
-                    s.Buffer = new Operand();
-                    s.Operation = null;
-                    break;
+                        s.History.Operation = operation;
+                        s.UserInput.Value = s.Input.Value;
+                        s.Input.IsOutput = true;
+                        s.Buffer = new Operand();
+                        s.Operation = null;
+                        break;
+                }
+
+                break;
             }
         }
     }
