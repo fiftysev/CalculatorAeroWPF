@@ -25,14 +25,14 @@ namespace CalculatorApp
             _state.History = new History();
             InitializeComponent();
             InitUi();
-        }
+        } 
 
         private void CalcButton_Click(object sender, RoutedEventArgs e)
         {
             var b = sender as Button;
             string content = b.Content.ToString();
             CalculatorController.Dispatcher(ref _state, content);
-            NumInput.Text = _state.UserInput;
+            NumInput.Text = _state.UserInput.Value;
         }
         
         private void InitUi()

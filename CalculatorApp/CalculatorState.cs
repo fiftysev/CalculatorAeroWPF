@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CalculatorApp
 {
@@ -7,7 +8,7 @@ namespace CalculatorApp
         public Operand Input;
         public Operand Buffer;
         public string Operation;
-        public string UserInput;
+        public Operand UserInput;
         public string Memory;
         public History History;
     }
