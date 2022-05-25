@@ -54,6 +54,9 @@ namespace CalculatorApp
 
                     break;
                 case Utils.CalculatorOperationType.Unary:
+                    if (!string.IsNullOrEmpty(s.Input.Value)) s.Input.Value = DispatchUnaryAction(payload, s.Input.Value);
+                    s.UserInput.Value = s.Input.Value;
+                    s.Input.IsModifiedByUnary = true;
                     break;
                 case Utils.CalculatorOperationType.Output:
                     DispatchOutputAction(ref s);
@@ -81,6 +84,20 @@ namespace CalculatorApp
                 _ => res
             };
             return res;
+        }
+
+        private static string DispatchUnaryAction(in string payload, in string num)
+        {
+            double res = 0;
+            double.TryParse(num, out var number);
+            res = payload switch
+            {
+                "√" => Math.Sqrt(number),
+                "±" => -number,
+                "1/x" => 1 / number,
+                _ => res
+            };
+            return res.ToString(CultureInfo.CurrentCulture);
         }
 
         private static void DispatchMemoryAction(ref CalculatorState s, in string action)
