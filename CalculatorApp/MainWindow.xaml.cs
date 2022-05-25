@@ -22,9 +22,6 @@ namespace CalculatorApp
 
         public MainWindow()
         {
-            _state.Operations = new Stack<string>();
-            _state.Operands = new Stack<string>();
-            _state.RightOperand = "0";
             _state.History = new History();
             InitializeComponent();
             InitUi();
@@ -35,7 +32,7 @@ namespace CalculatorApp
             var b = sender as Button;
             string content = b.Content.ToString();
             CalculatorController.Dispatcher(ref _state, content);
-            NumInput.Text = _state.CurrentInput.Value;
+            NumInput.Text = _state.UserInput;
         }
         
         private void InitUi()

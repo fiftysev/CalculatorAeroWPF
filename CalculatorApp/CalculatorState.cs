@@ -4,11 +4,11 @@ namespace CalculatorApp
 {
     public struct CalculatorState
     {
-        public string RightOperand;
-        public CurrentInput CurrentInput;
+        public Operand Input;
+        public Operand Buffer;
+        public string Operation;
+        public string UserInput;
         public string Memory;
-        public Stack<string> Operands;
-        public Stack<string> Operations;
         public History History;
     }
 
@@ -18,7 +18,7 @@ namespace CalculatorApp
         public string Operation;
     }
 
-    public struct CurrentInput
+    public struct Operand
     {
        public string Value;
        public bool IsModifiedByUnary;

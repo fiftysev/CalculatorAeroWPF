@@ -11,21 +11,43 @@ namespace CalculatorApp
             switch (Utils.TypesMap[payload])
             {
                 case Utils.CalculatorOperationType.Digit:
-                    if (s.RightOperand is null || s.RightOperand.Equals("0")) s.RightOperand = payload;
-                    else s.RightOperand += payload;
-                    s.CurrentInput.Value = s.RightOperand;
+                    if (s.Input.Value is null or "0" || s.Input.IsOutput || s.Input.IsModifiedByUnary)
+                        s.Input.Value = payload;
+                    else s.Input.Value += payload;
+                    s.UserInput = s.Input.Value;
                     break;
                 case Utils.CalculatorOperationType.FloatingPoint:
-                    if (s.RightOperand is null) s.RightOperand = "0";
-                    s.RightOperand = s.RightOperand.Contains(payload) ? s.RightOperand : s.RightOperand + payload;
-                    s.CurrentInput.Value = s.RightOperand;
+                    s.Input.Value ??= "0";
+                    if (!s.Input.Value.Contains(payload)) s.Input.Value += payload;
+                    s.UserInput = s.Input.Value;
                     break;
                 case Utils.CalculatorOperationType.Binary:
-                    if (s.RightOperand is null) return;
-                    s.Operands.Push(s.RightOperand);
-                    if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.Operations.Pop());
-                    s.Operations.Push(payload);
-                    s.RightOperand = null;
+                    switch ((s.Buffer.Value is null, s.Input.Value is null))
+                    {
+                        case (true, true):
+                            break;
+                        case (true, false):
+                            s.Buffer.Value = s.Input.Value;
+                            s.Operation = payload;
+                            s.Input.Value = null;
+                            break;
+                        case (false, true):
+                            s.Operation = payload;
+                            break;
+                        case (false, false):
+                            if (s.Operation is not null)
+                            {
+                                s.Buffer.Value =
+                                    DispatchBinaryAction(s.Buffer.Value, s.Input.Value, s.Operation)
+                                        .ToString(CultureInfo.CurrentCulture);
+                            }
+
+                            s.Operation = payload;
+                            s.UserInput = s.Buffer.Value;
+                            s.Input.Value = null;
+                            break;
+                    }
+
                     break;
                 case Utils.CalculatorOperationType.Unary:
                     break;
@@ -41,35 +63,20 @@ namespace CalculatorApp
             }
         }
 
-        private static void DispatchBinaryAction(ref CalculatorState s, in string payload)
+        private static double DispatchBinaryAction(in string num1, in string num2, in string payload)
         {
             double res = 0;
-            double.TryParse(s.Operands.Pop(), out var second);
-            double.TryParse(s.Operands.Pop(), out var first);
-            switch (payload)
+            double.TryParse(num1, out var first);
+            double.TryParse(num2, out var second);
+            res = payload switch
             {
-                case "+":
-                    res = first + second;
-                    break;
-                case "-":
-                    res = first - second;
-                    break;
-                case "*":
-                    res = first * second;
-                    break;
-                case "/":
-                    res = first / second;
-                    break;
-                case "%":
-                    res = first % second;
-                    break;
-            }
-
-            var stringify = res.ToString(CultureInfo.CurrentCulture);
-            s.Operands.Push(stringify);
-            s.CurrentInput.Value = stringify;
-            s.History.Operand = second.ToString(CultureInfo.CurrentCulture);
-            s.History.Operation = payload;
+                "+" => first + second,
+                "-" => first - second,
+                "*" => first * second,
+                "/" => first / second,
+                _ => res
+            };
+            return res;
         }
 
         private static void DispatchMemoryAction(ref CalculatorState s, in string action)
@@ -77,47 +84,45 @@ namespace CalculatorApp
             switch (action)
             {
                 case "MS":
-                    s.Memory = s.CurrentInput.Value;
+                    s.Memory = s.UserInput;
                     break;
                 case "MR":
-                    s.RightOperand = s.CurrentInput.Value = s.Memory;
+                    s.Input.Value = s.UserInput = s.Memory;
                     break;
                 case "MC":
                     s.Memory = "";
                     break;
                 case "M+":
-                    s.Memory = (Convert.ToDouble(s.Memory) + Convert.ToDouble(s.CurrentInput)).ToString(CultureInfo.CurrentCulture);
+                    s.Memory =
+                        (Convert.ToDouble(s.Memory) + Convert.ToDouble(s.UserInput)).ToString(CultureInfo
+                            .CurrentCulture);
                     break;
                 case "M-":
-                    s.Memory = (Convert.ToDouble(s.Memory) - Convert.ToDouble(s.CurrentInput)).ToString(CultureInfo.CurrentCulture);
+                    s.Memory =
+                        (Convert.ToDouble(s.Memory) - Convert.ToDouble(s.UserInput)).ToString(CultureInfo
+                            .CurrentCulture);
                     break;
             }
         }
 
         private static void DispatchClearInputAction(ref CalculatorState s, in string action)
         {
+            s.Input.Value = s.UserInput = "0";
             switch (action)
             {
                 case "C":
-                    s.RightOperand = s.CurrentInput.Value = "0";
+                    s.Buffer = new Operand();
+                    s.History = new History();
+                    s.Memory = null;
+                    s.Operation = null;
                     break;
                 case "CE":
-                    s.RightOperand = s.CurrentInput.Value = "0";
-                    s.Operands.Clear();
-                    s.Operations.Clear();
-                    s.History = new History();
                     break;
             }
         }
 
         private static void DispatchOutputAction(ref CalculatorState s)
         {
-            if (s.Operands.Count < 2 && s.Operands.Count != 0)
-            {
-                if (s.RightOperand is null) s.Operands.Push(string.IsNullOrEmpty(s.History.Operand) ? s.Operands.Peek() : s.History.Operand);
-                else s.Operands.Push(s.RightOperand);
-            }
-            if (s.Operations.Count != 0 && s.Operands.Count >= 2) DispatchBinaryAction(ref s, s.History.Operation ?? s.Operations.Pop());
         }
     }
 }
