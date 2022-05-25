@@ -28,7 +28,7 @@
                Height="50"
                TextAlignment="Right"
                VerticalContentAlignment="Bottom"
-               FontSize="18"
+               FontSize="22"
                Margin="10 2.5" 
                Text="0"
                IsReadOnly="True"/>

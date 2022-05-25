@@ -94,14 +94,16 @@ namespace CalculatorApp
                     s.Input.Value = s.UserInput.Value = s.Memory;
                     break;
                 case "MC":
-                    s.Memory = "";
+                    s.Memory = null;
                     break;
                 case "M+":
+                    if (s.Memory is null) return;
                     s.Memory =
                         (Convert.ToDouble(s.Memory) + Convert.ToDouble(s.UserInput)).ToString(CultureInfo
                             .CurrentCulture);
                     break;
                 case "M-":
+                    if (s.Memory is null) return;
                     s.Memory =
                         (Convert.ToDouble(s.Memory) - Convert.ToDouble(s.UserInput)).ToString(CultureInfo
                             .CurrentCulture);
@@ -138,8 +140,8 @@ namespace CalculatorApp
                         s.Buffer.Value = s.Input.Value;
                         s.Input.Value = s.History.Operand;
                         continue;
-                    case (true, false):
-                        s.Buffer.Value = s.Input.Value;
+                    case (false, true):
+                        s.Input.Value = s.Buffer.Value;
                         continue;
                     case (false, false) when !string.IsNullOrEmpty(s.Operation) || !string.IsNullOrEmpty(s.History.Operation):
                         var operation = s.Operation ?? s.History.Operation;
