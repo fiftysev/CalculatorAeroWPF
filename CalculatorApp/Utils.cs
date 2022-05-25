@@ -8,6 +8,7 @@ namespace CalculatorApp
       {
          Binary,
          Unary,
+         Percent,
          ClearData,
          Memory,
          Output,
@@ -37,6 +38,7 @@ namespace CalculatorApp
             {"1/x", CalculatorOperationType.Unary},
             {"√", CalculatorOperationType.Unary},
             {"±", CalculatorOperationType.Unary},
+            {"%", CalculatorOperationType.Percent},
             {"MC", CalculatorOperationType.Memory},
             {"MR", CalculatorOperationType.Memory},
             {"MS", CalculatorOperationType.Memory},

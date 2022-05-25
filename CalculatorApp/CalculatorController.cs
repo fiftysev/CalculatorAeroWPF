@@ -58,6 +58,11 @@ namespace CalculatorApp
                     s.UserInput.Value = s.Input.Value;
                     s.Input.IsModifiedByUnary = true;
                     break;
+                case Utils.CalculatorOperationType.Percent:
+                    s.Input.Value = DispatchPercentAction(payload, s.Buffer.Value, s.Input.Value);
+                    s.UserInput.Value = s.Input.Value;
+                    s.Input.IsModifiedByUnary = true;
+                    break;
                 case Utils.CalculatorOperationType.Output:
                     DispatchOutputAction(ref s);
                     break;
@@ -98,6 +103,13 @@ namespace CalculatorApp
                 _ => res
             };
             return res.ToString(CultureInfo.CurrentCulture);
+        }
+
+        private static string DispatchPercentAction(in string payload, in string num, in string percents)
+        {
+            double.TryParse(num, out var number);
+            double.TryParse(percents, out var per);
+            return ((number / 100) * per).ToString(CultureInfo.CurrentCulture);
         }
 
         private static void DispatchMemoryAction(ref CalculatorState s, in string action)
