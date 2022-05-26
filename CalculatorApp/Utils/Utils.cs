@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CalculatorApp.Utils
+namespace CalculatorApp
 {
    public static class Utils
    {
@@ -13,41 +13,26 @@ namespace CalculatorApp.Utils
          Memory,
          Output,
          Digit,
-         FloatingPoint
+         FloatingPoint,
+         ErrorType
       }
 
-      public static readonly Dictionary<string, CalculatorOperationType> TypesMap =
-         new()
+      public static CalculatorOperationType GetOperationType(string payload)
+      {
+         var type = payload switch
          {
-            {"1", CalculatorOperationType.Digit},
-            {"2", CalculatorOperationType.Digit},
-            {"3", CalculatorOperationType.Digit},
-            {"4", CalculatorOperationType.Digit},
-            {"5", CalculatorOperationType.Digit},
-            {"6", CalculatorOperationType.Digit},
-            {"7", CalculatorOperationType.Digit},
-            {"8", CalculatorOperationType.Digit},
-            {"9", CalculatorOperationType.Digit},
-            {"0", CalculatorOperationType.Digit},
-            {",", CalculatorOperationType.FloatingPoint},
-            {".", CalculatorOperationType.FloatingPoint},
-            {"+", CalculatorOperationType.Binary},
-            {"*", CalculatorOperationType.Binary},
-            {"/", CalculatorOperationType.Binary},
-            {"-", CalculatorOperationType.Binary},
-            {"1/x", CalculatorOperationType.Unary},
-            {"√", CalculatorOperationType.Unary},
-            {"±", CalculatorOperationType.Unary},
-            {"%", CalculatorOperationType.Percent},
-            {"MC", CalculatorOperationType.Memory},
-            {"MR", CalculatorOperationType.Memory},
-            {"MS", CalculatorOperationType.Memory},
-            {"M+", CalculatorOperationType.Memory},
-            {"M-", CalculatorOperationType.Memory},
-            {"C", CalculatorOperationType.ClearData},
-            {"CE", CalculatorOperationType.ClearData},
-            {"🠔", CalculatorOperationType.ClearData},
-            {"=", CalculatorOperationType.Output}
+            _ when double.TryParse(payload, out _) => CalculatorOperationType.Digit,
+            _ when "+-/*".Contains(payload) => CalculatorOperationType.Binary,
+            _ when "√±1/x".Contains(payload) => CalculatorOperationType.Unary,
+            "%" => CalculatorOperationType.Percent,
+            _ when payload.Contains("M") => CalculatorOperationType.Memory,
+            _ when payload.Contains("C") => CalculatorOperationType.ClearData,
+            _ when ".,".Contains(payload) => CalculatorOperationType.FloatingPoint,
+            "=" => CalculatorOperationType.Output,
+            _ => CalculatorOperationType.ErrorType
          };
+
+         return type;
+      }
    } 
 }

@@ -8,37 +8,30 @@ namespace BusinessLogicTest
     public class BinaryOperations
     {
         private CalculatorController _c;
-        private CalculatorState _s;
 
         [SetUp]
         public void SetUp()
         {
-            _s = new CalculatorState();
-            _c = new CalculatorController(ref _s);
+            _c = new CalculatorController();
         }
 
         [Test]
         public void WithoutOutput()
         {
-            _c.Dispatch("1");
-            _c.Dispatch("2");
+            _c.Dispatch("12");
             _c.Dispatch("+");
             _c.Dispatch("4");
             _c.Dispatch("-");
 
             Assert.AreEqual("16", _c.UiText);
-            Assert.IsNull(_s.Input.Value);
         }
 
         [Test]
         public void WithoutOutputWithOperationChanging()
         {
-            _c.Dispatch("1");
-            _c.Dispatch("2");
+            _c.Dispatch("12");
             _c.Dispatch("+");
             _c.Dispatch("*");
-            
-            Assert.AreEqual("*", _s.Operation);
             
             _c.Dispatch("4");
             _c.Dispatch("/");
@@ -49,8 +42,7 @@ namespace BusinessLogicTest
         [Test]
         public void ManyOperationsWithoutOutput()
         {
-            _c.Dispatch("1");
-            _c.Dispatch("2");
+            _c.Dispatch("12");
             _c.Dispatch("+");
             _c.Dispatch("-");
             _c.Dispatch("/");
@@ -75,9 +67,6 @@ namespace BusinessLogicTest
             _c.Dispatch("=");
 
             Assert.AreEqual("9", _c.UiText);
-            
-            Assert.IsNull(_s.Operation);
-            Assert.IsNull(_s.Buffer.Value);
         }
 
         [Test]

@@ -14,7 +14,7 @@ namespace CalculatorApp.Controllers
         {
             _s = new CalculatorState();
         }
-        
+
         public CalculatorController(ref CalculatorState state)
         {
             _s = state;
@@ -29,12 +29,11 @@ namespace CalculatorApp.Controllers
         /// Main method in controller, does matching of operation from button with BL (like FLUX arch)
         /// </summary>
         /// <param name="payload"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void Dispatch(in string payload)
         {
-            switch (Utils.Utils.TypesMap[payload])
+            switch (Utils.GetOperationType(payload))
             {
-                case Utils.Utils.CalculatorOperationType.Digit:
+                case Utils.CalculatorOperationType.Digit:
                     if (_s.Input.Value is null or "0" || _s.Input.IsOutput || _s.Input.IsModifiedByUnary)
                     {
                         _s.Input.Value = payload;
@@ -45,12 +44,12 @@ namespace CalculatorApp.Controllers
 
                     _s.UserInput = _s.Input.Value;
                     break;
-                case Utils.Utils.CalculatorOperationType.FloatingPoint:
+                case Utils.CalculatorOperationType.FloatingPoint:
                     _s.Input.Value ??= "0";
                     if (!_s.Input.Value.Contains(payload)) _s.Input.Value += payload;
                     _s.UserInput = _s.Input.Value;
                     break;
-                case Utils.Utils.CalculatorOperationType.Binary:
+                case Utils.CalculatorOperationType.Binary:
                     switch ((_s.Buffer.Value is null, _s.Input.Value is null))
                     {
                         case (true, true):
@@ -77,28 +76,28 @@ namespace CalculatorApp.Controllers
                     }
 
                     break;
-                case Utils.Utils.CalculatorOperationType.Unary:
+                case Utils.CalculatorOperationType.Unary:
                     if (!string.IsNullOrEmpty(_s.Input.Value))
                         _s.Input.Value = UnaryActionReducer(_s.Input.Value, payload);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
-                case Utils.Utils.CalculatorOperationType.Percent:
+                case Utils.CalculatorOperationType.Percent:
                     _s.Input.Value = PercentActionReducer(_s.Buffer.Value, _s.Input.Value);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
-                case Utils.Utils.CalculatorOperationType.Output:
+                case Utils.CalculatorOperationType.Output:
                     DispatchOutputAction();
                     break;
-                case Utils.Utils.CalculatorOperationType.Memory:
+                case Utils.CalculatorOperationType.Memory:
                     MemoryActionReducer(payload);
                     break;
-                case Utils.Utils.CalculatorOperationType.ClearData:
+                case Utils.CalculatorOperationType.ClearData:
                     DispatchClearInputAction(payload);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                case Utils.CalculatorOperationType.ErrorType:
+                    break;
             }
         }
 
