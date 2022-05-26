@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using CalculatorApp;
+using CalculatorApp.Controllers;
 
 namespace BusinessLogicTest
 {

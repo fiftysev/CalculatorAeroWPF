@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
-using CalculatorApp;
+using CalculatorApp.Controllers;
+using CalculatorApp.Models;
 
 namespace BusinessLogicTest
 {
@@ -7,11 +8,13 @@ namespace BusinessLogicTest
     public class BinaryOperations
     {
         private CalculatorController _c;
+        private CalculatorState _s;
 
         [SetUp]
         public void SetUp()
         {
-            _c = new CalculatorController();
+            _s = new CalculatorState();
+            _c = new CalculatorController(ref _s);
         }
 
         [Test]
@@ -24,6 +27,7 @@ namespace BusinessLogicTest
             _c.Dispatch("-");
 
             Assert.AreEqual("16", _c.UiText);
+            Assert.IsNull(_s.Input.Value);
         }
 
         [Test]
@@ -33,6 +37,9 @@ namespace BusinessLogicTest
             _c.Dispatch("2");
             _c.Dispatch("+");
             _c.Dispatch("*");
+            
+            Assert.AreEqual("*", _s.Operation);
+            
             _c.Dispatch("4");
             _c.Dispatch("/");
 
@@ -68,6 +75,9 @@ namespace BusinessLogicTest
             _c.Dispatch("=");
 
             Assert.AreEqual("9", _c.UiText);
+            
+            Assert.IsNull(_s.Operation);
+            Assert.IsNull(_s.Buffer.Value);
         }
 
         [Test]
