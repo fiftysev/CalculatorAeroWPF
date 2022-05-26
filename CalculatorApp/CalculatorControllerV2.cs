@@ -3,7 +3,6 @@ using System.Globalization;
 
 namespace CalculatorApp
 {
-    //TODO: Directories structure
     public class CalculatorController
     {
         private CalculatorState _s;
@@ -18,7 +17,7 @@ namespace CalculatorApp
         {
             _s = new CalculatorState();
         }
-        
+
         /// <summary>
         /// Main method in controller, does matching of operation from button with BL (like FLUX arch)
         /// </summary>
@@ -36,6 +35,7 @@ namespace CalculatorApp
                         _s.Input.IsModifiedByUnary = false;
                     }
                     else _s.Input.Value += payload;
+
                     _s.UserInput = _s.Input.Value;
                     break;
                 case Utils.CalculatorOperationType.FloatingPoint:
@@ -71,7 +71,8 @@ namespace CalculatorApp
 
                     break;
                 case Utils.CalculatorOperationType.Unary:
-                    if (!string.IsNullOrEmpty(_s.Input.Value)) _s.Input.Value = UnaryActionReducer(_s.Input.Value, payload);
+                    if (!string.IsNullOrEmpty(_s.Input.Value))
+                        _s.Input.Value = UnaryActionReducer(_s.Input.Value, payload);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
@@ -95,19 +96,19 @@ namespace CalculatorApp
         }
 
         /// <summary>
-        /// 
+        /// Method for process binary math operations
         /// </summary>
         /// <param name="num1"></param>
         /// <param name="num2"></param>
         /// <param name="payload"></param>
-        /// <returns></returns>
+        /// <returns>Result of binary operation</returns>
+        /// <exception cref="InvalidOperationException">If try divide by zero</exception>
         private static string BinaryActionReducer(in string num1, in string num2, in string payload)
         {
             double res = 0;
             double.TryParse(num1, out var first);
             double.TryParse(num2, out var second);
             if (payload.Equals("/") && second.Equals(0))
-                //TODO: Resources using
                 throw new InvalidOperationException("Деление на ноль невозможно");
             res = payload switch
             {
@@ -120,11 +121,19 @@ namespace CalculatorApp
             return res.ToString(CultureInfo.CurrentCulture);
         }
 
+        /// <summary>
+        /// Method for process unary math operations
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="payload"></param>
+        /// <returns>Result of binary operation</returns>
+        /// <exception cref="InvalidOperationException">If try divide by zero</exception>
         private static string UnaryActionReducer(in string num, in string payload)
         {
             double res = 0;
             double.TryParse(num, out var number);
-            if (payload.Equals("1/x") && number.Equals(0)) throw new InvalidOperationException("Деление на ноль невозможно");
+            if (payload.Equals("1/x") && number.Equals(0))
+                throw new InvalidOperationException("Деление на ноль невозможно");
             res = payload switch
             {
                 "√" => Math.Sqrt(number),
@@ -135,6 +144,12 @@ namespace CalculatorApp
             return res.ToString(CultureInfo.CurrentCulture);
         }
 
+        /// <summary>
+        /// Method only for get percent of number
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="percents"></param>
+        /// <returns></returns>
         private static string PercentActionReducer(in string num, in string percents)
         {
             double.TryParse(num, out var number);
@@ -142,6 +157,10 @@ namespace CalculatorApp
             return ((number / 100) * per).ToString(CultureInfo.CurrentCulture);
         }
 
+        /// <summary>
+        /// Method for process memory operations
+        /// </summary>
+        /// <param name="action"></param>
         private void MemoryActionReducer(in string action)
         {
             switch (action)
@@ -170,23 +189,36 @@ namespace CalculatorApp
             }
         }
 
+        /// <summary>
+        /// Method for clear user input and calculator model data
+        /// </summary>
+        /// <param name="action"></param>
         private void DispatchClearInputAction(in string action)
         {
-            _s.Input.Value = _s.UserInput = "0";
             switch (action)
             {
-                //TODO: Backspacing
+                case "🠔":
+                    if (string.IsNullOrEmpty(_s.Input.Value) || _s.Input.Value.Equals("0")) return;
+                    _s.Input.Value = _s.Input.Value.Remove(_s.Input.Value.Length - 1);
+                    if (string.IsNullOrEmpty(_s.Input.Value)) _s.Input.Value = "0";
+                    _s.UserInput = _s.Input.Value;
+                    break;
                 case "C":
+                    _s.Input.Value = _s.UserInput = "0";
                     _s.Buffer = new Operand();
                     _s.History = new History();
                     _s.Memory = null;
                     _s.Operation = null;
                     break;
                 case "CE":
+                    _s.Input.Value = _s.UserInput = "0";
                     break;
             }
         }
 
+        /// <summary>
+        /// Method for operation = logic
+        /// </summary>
         private void DispatchOutputAction()
         {
             while (true)
@@ -203,7 +235,8 @@ namespace CalculatorApp
                     case (false, true):
                         _s.Input.Value = _s.Buffer.Value;
                         continue;
-                    case (false, false) when !string.IsNullOrEmpty(_s.Operation) || !string.IsNullOrEmpty(_s.History.Operation):
+                    case (false, false) when !string.IsNullOrEmpty(_s.Operation) ||
+                                             !string.IsNullOrEmpty(_s.History.Operation):
                         var operation = _s.Operation ?? _s.History.Operation;
                         if (!_s.Input.IsOutput) _s.History.Operand = _s.Input.Value;
                         _s.Input.Value = BinaryActionReducer(_s.Buffer.Value, _s.Input.Value, operation);

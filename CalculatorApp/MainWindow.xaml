@@ -8,7 +8,7 @@
         ResizeMode="NoResize"
         Background="AliceBlue"
         KeyDown="Window_KeyDown"
-        Title="Calculator" SizeToContent="WidthAndHeight">
+        Title="Calculator" Height="325" Width="225">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Style.Triggers>
@@ -16,39 +16,76 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
     </Window.Resources>
     <StackPanel>
-           <Menu x:Name="Menu" Background="White">
-               <MenuItem Header="Вид"/>
-               <MenuItem Header="Правка"/>
-               <MenuItem Header="Справка"/>
-           </Menu>
-           <Label x:Name="History" HorizontalAlignment="Right"/> 
-           <TextBox 
-               x:Name="NumInput" 
-               Height="60"
-               TextAlignment="Right"
-               VerticalContentAlignment="Bottom"
-               FontSize="22"
-               Margin="7.5 2.5 7.5 0" 
-               Text="0"
-               IsReadOnly="True"/>
-           <Grid MinWidth="200" MinHeight="185" Margin="7.5 2.5 7.5 2.5" x:Name="RootLayout">
-               <Grid.RowDefinitions>
-                   <RowDefinition />
-                   <RowDefinition />
-                   <RowDefinition />
-                   <RowDefinition />
-                   <RowDefinition />
-                   <RowDefinition />
-               </Grid.RowDefinitions>
-               <Grid.ColumnDefinitions>
-                   <ColumnDefinition />
-                   <ColumnDefinition />
-                   <ColumnDefinition />
-                   <ColumnDefinition />
-                   <ColumnDefinition />
-               </Grid.ColumnDefinitions>
-           </Grid>
-       </StackPanel> 
+        <Menu x:Name="Menu" Background="White">
+            <MenuItem Header="Вид">
+                <MenuItem Header="Обычный" IsChecked="True"/>
+                <MenuItem Header="Инженерный" />
+                <MenuItem Header="Программист" />
+                <MenuItem Header="Статистика" />
+                <Separator/>
+                <MenuItem Header="Журнал" IsCheckable="True"/>
+                <MenuItem Header="Группировка цифр по разрядам" IsCheckable="True"/>
+                <Separator/>
+                <MenuItem Header="Обычный" />
+                <MenuItem Header="Преобразование единиц" />
+                <MenuItem Header="Вычисление даты" />
+                <MenuItem Header="Листы">
+                    <MenuItem Header="Ипотека"/>
+                    <MenuItem Header="Автолизинг"/>
+                    <MenuItem Header="Экономия (миль/галлон)"/>
+                    <MenuItem Header="Экономия топлива (л/100 км)"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Правка">
+                <MenuItem Header="Копировать"></MenuItem>
+                <MenuItem Header="Вставить"></MenuItem>
+                <Separator />
+                <MenuItem Header="Журнал">
+                    <MenuItem Header="Копировать журнал" />
+                    <MenuItem Header="Изменить" />
+                    <MenuItem Header="Отменить правку" />
+                    <MenuItem Header="Очистить" />
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Header="Просмотреть справку" />
+                <Separator />
+                <MenuItem Header="О программе" />
+            </MenuItem>
+        </Menu>
+        <Label x:Name="History" HorizontalAlignment="Right" />
+        <TextBox
+            x:Name="NumInput"
+            Height="60"
+            TextAlignment="Right"
+            VerticalContentAlignment="Bottom"
+            FontSize="22"
+            Margin="7.5 2.5 7.5 0"
+            Text="0"
+            IsReadOnly="True" />
+        <Grid MinWidth="200" MinHeight="185" Margin="7.5" x:Name="RootLayout">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+        </Grid>
+    </StackPanel>
 </Window>

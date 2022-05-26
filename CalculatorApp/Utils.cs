@@ -46,6 +46,7 @@ namespace CalculatorApp
             {"M-", CalculatorOperationType.Memory},
             {"C", CalculatorOperationType.ClearData},
             {"CE", CalculatorOperationType.ClearData},
+            {"🠔", CalculatorOperationType.ClearData},
             {"=", CalculatorOperationType.Output}
          };
    } 
