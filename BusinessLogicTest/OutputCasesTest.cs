@@ -68,5 +68,18 @@ namespace BusinessLogicTest
 
             Assert.AreEqual("23", _c.UiText);
         }
+
+        [Test]
+        public void InputAfterOutput()
+        {
+            _c.Dispatch("5");
+            _c.Dispatch("+");
+            _c.Dispatch("6");
+            _c.Dispatch("=");
+            
+            _c.Dispatch("12");
+            
+            Assert.AreEqual("12", _c.UiText);
+        }
     }
 }
