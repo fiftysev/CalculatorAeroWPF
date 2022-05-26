@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
+using CalculatorApp.Models;
 
-namespace CalculatorApp
+namespace CalculatorApp.Controllers
 {
     public class CalculatorController
     {
@@ -11,6 +13,11 @@ namespace CalculatorApp
         public CalculatorController()
         {
             _s = new CalculatorState();
+        }
+        
+        public CalculatorController(ref CalculatorState state)
+        {
+            _s = state;
         }
 
         public void ResetState()
@@ -25,9 +32,9 @@ namespace CalculatorApp
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void Dispatch(in string payload)
         {
-            switch (Utils.TypesMap[payload])
+            switch (Utils.Utils.TypesMap[payload])
             {
-                case Utils.CalculatorOperationType.Digit:
+                case Utils.Utils.CalculatorOperationType.Digit:
                     if (_s.Input.Value is null or "0" || _s.Input.IsOutput || _s.Input.IsModifiedByUnary)
                     {
                         _s.Input.Value = payload;
@@ -38,12 +45,12 @@ namespace CalculatorApp
 
                     _s.UserInput = _s.Input.Value;
                     break;
-                case Utils.CalculatorOperationType.FloatingPoint:
+                case Utils.Utils.CalculatorOperationType.FloatingPoint:
                     _s.Input.Value ??= "0";
                     if (!_s.Input.Value.Contains(payload)) _s.Input.Value += payload;
                     _s.UserInput = _s.Input.Value;
                     break;
-                case Utils.CalculatorOperationType.Binary:
+                case Utils.Utils.CalculatorOperationType.Binary:
                     switch ((_s.Buffer.Value is null, _s.Input.Value is null))
                     {
                         case (true, true):
@@ -70,24 +77,24 @@ namespace CalculatorApp
                     }
 
                     break;
-                case Utils.CalculatorOperationType.Unary:
+                case Utils.Utils.CalculatorOperationType.Unary:
                     if (!string.IsNullOrEmpty(_s.Input.Value))
                         _s.Input.Value = UnaryActionReducer(_s.Input.Value, payload);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
-                case Utils.CalculatorOperationType.Percent:
+                case Utils.Utils.CalculatorOperationType.Percent:
                     _s.Input.Value = PercentActionReducer(_s.Buffer.Value, _s.Input.Value);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
-                case Utils.CalculatorOperationType.Output:
+                case Utils.Utils.CalculatorOperationType.Output:
                     DispatchOutputAction();
                     break;
-                case Utils.CalculatorOperationType.Memory:
+                case Utils.Utils.CalculatorOperationType.Memory:
                     MemoryActionReducer(payload);
                     break;
-                case Utils.CalculatorOperationType.ClearData:
+                case Utils.Utils.CalculatorOperationType.ClearData:
                     DispatchClearInputAction(payload);
                     break;
                 default:
@@ -127,21 +134,27 @@ namespace CalculatorApp
         /// <param name="num"></param>
         /// <param name="payload"></param>
         /// <returns>Result of binary operation</returns>
-        /// <exception cref="InvalidOperationException">If try divide by zero</exception>
+        /// <exception cref="InvalidOperationException">If try divide by zero or sqrt negative num</exception>
         private static string UnaryActionReducer(in string num, in string payload)
         {
             double res = 0;
             double.TryParse(num, out var number);
-            if (payload.Equals("1/x") && number.Equals(0))
-                throw new InvalidOperationException("Деление на ноль невозможно");
-            res = payload switch
+            switch (payload)
             {
-                "√" => Math.Sqrt(number),
-                "±" => -number,
-                "1/x" => 1 / number,
-                _ => res
-            };
-            return res.ToString(CultureInfo.CurrentCulture);
+                case "1/x" when number.Equals(0):
+                    throw new InvalidOperationException("Деление на ноль невозможно");
+                case "√" when number < 0:
+                    throw new InvalidOperationException("Недопустимый ввод");
+                default:
+                    res = payload switch
+                    {
+                        "√" => Math.Sqrt(number),
+                        "±" => -number,
+                        "1/x" => Math.Pow(number, -1),
+                        _ => res
+                    };
+                    return res.ToString(CultureInfo.CurrentCulture);
+            }
         }
 
         /// <summary>
@@ -204,11 +217,11 @@ namespace CalculatorApp
                     _s.UserInput = _s.Input.Value;
                     break;
                 case "C":
-                    _s.Input.Value = _s.UserInput = "0";
                     _s.Buffer = new Operand();
                     _s.History = new History();
                     _s.Memory = null;
                     _s.Operation = null;
+                    _s.Input.Value = _s.UserInput = "0";
                     break;
                 case "CE":
                     _s.Input.Value = _s.UserInput = "0";

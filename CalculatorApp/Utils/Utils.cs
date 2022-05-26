@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CalculatorApp
+namespace CalculatorApp.Utils
 {
    public static class Utils
    {
@@ -16,8 +16,8 @@ namespace CalculatorApp
          FloatingPoint
       }
 
-      public static Dictionary<string, CalculatorOperationType> TypesMap =
-         new Dictionary<string, CalculatorOperationType>
+      public static readonly Dictionary<string, CalculatorOperationType> TypesMap =
+         new()
          {
             {"1", CalculatorOperationType.Digit},
             {"2", CalculatorOperationType.Digit},

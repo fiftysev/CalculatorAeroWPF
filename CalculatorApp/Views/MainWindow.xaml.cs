@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CalculatorApp.Controllers;
 
-namespace CalculatorApp
+namespace CalculatorApp.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

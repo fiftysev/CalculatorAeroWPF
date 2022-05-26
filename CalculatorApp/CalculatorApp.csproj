@@ -76,7 +76,7 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Include="Utils\Utils.cs" />
-        <Compile Include="VIews\MainWindow.xaml.cs">
+        <Compile Include="Views\MainWindow.xaml.cs">
           <DependentUpon>MainWindow.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
@@ -99,7 +99,7 @@
         <None Include="App.config" />
     </ItemGroup>
     <ItemGroup>
-      <Page Include="VIews\MainWindow.xaml">
+      <Page Include="Views\MainWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
         <SubType>Designer</SubType>
       </Page>
