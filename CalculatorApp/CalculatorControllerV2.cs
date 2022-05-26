@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace CalculatorApp
 {
+    //TODO: Directories structure
     public class CalculatorController
     {
         private CalculatorState _s;
@@ -106,6 +107,7 @@ namespace CalculatorApp
             double.TryParse(num1, out var first);
             double.TryParse(num2, out var second);
             if (payload.Equals("/") && second.Equals(0))
+                //TODO: Resources using
                 throw new InvalidOperationException("Деление на ноль невозможно");
             res = payload switch
             {
@@ -173,6 +175,7 @@ namespace CalculatorApp
             _s.Input.Value = _s.UserInput = "0";
             switch (action)
             {
+                //TODO: Backspacing
                 case "C":
                     _s.Buffer = new Operand();
                     _s.History = new History();
