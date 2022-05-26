@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Channels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 
 namespace CalculatorApp
 {
@@ -54,7 +52,7 @@ namespace CalculatorApp
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            var operation = "";
+            string operation;
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
             {
                 operation = e.Key switch
@@ -67,7 +65,7 @@ namespace CalculatorApp
             else
                 operation = e.Key switch
                 {
-                    Key.Back => "<-",
+                    Key.Back => "🠔",
                     Key.Return or Key.OemPlus => "=",
                     Key.Escape => "C",
                     Key.Delete => "CE",
