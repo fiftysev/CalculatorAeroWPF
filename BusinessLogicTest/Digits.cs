@@ -2,87 +2,81 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using CalculatorApp;
+using CalculatorApp.Controllers;
 
 namespace BusinessLogicTest
 {
     [TestFixture]
     public class DigitsAdding
     {
-        private CalculatorState s;
+        private CalculatorController _c;
 
         [SetUp]
         public void SetUp()
         {
-            s = new CalculatorState
-            {
-                Operands = new Stack<string>(), 
-                Operations = new Stack<string>(), 
-                RightOperand = "0"
-            };
+            _c = new CalculatorController();
         }
 
         [Test]
         public void SingleDigit()
         {
-            CalculatorController.Dispatcher(ref s, "1");
-            Assert.AreEqual("1", s.RightOperand);
+            _c.Dispatch("1");
+            Assert.AreEqual("1", _c.UiText);
         }
 
         [Test]
         public void ManyDigits()
         {
-            CalculatorController.Dispatcher(ref s, "2");
-            CalculatorController.Dispatcher(ref s, "3");
-            CalculatorController.Dispatcher(ref s, "4");
-            Assert.AreEqual("234", s.RightOperand);
+            _c.Dispatch("2");
+            _c.Dispatch("3");
+            _c.Dispatch("4");
+            Assert.AreEqual("234", _c.UiText);
         }
 
         [Test]
         public void WithSingleFloatingPoint()
         {
-            CalculatorController.Dispatcher(ref s, "3");
-            CalculatorController.Dispatcher(ref s, ",");
-            CalculatorController.Dispatcher(ref s, "4");
-            Assert.AreEqual("3,4", s.RightOperand);
+            _c.Dispatch("3");
+            _c.Dispatch(",");
+            _c.Dispatch("3");
+            Assert.AreEqual("3,3", _c.UiText);
         }
 
         [Test]
         public void SingleFloatingPoint()
         {
-            CalculatorController.Dispatcher(ref s, ",");
-            Assert.AreEqual("0,", s.RightOperand);
+            _c.Dispatch(",");
+            Assert.AreEqual("0,", _c.UiText);
         }
-
 
         [Test]
         public void WithManyFloatingPoints()
         {
-            CalculatorController.Dispatcher(ref s, "3");
-            CalculatorController.Dispatcher(ref s, ",");
-            CalculatorController.Dispatcher(ref s, ",");
-            CalculatorController.Dispatcher(ref s, "4");
-            CalculatorController.Dispatcher(ref s, ",");
-            Assert.AreEqual("3,4", s.RightOperand);
+            _c.Dispatch("3");
+            _c.Dispatch(",");
+            _c.Dispatch(",");
+            _c.Dispatch("4");
+            _c.Dispatch(",");
+            Assert.AreEqual("3,4", _c.UiText);
         }
 
         [Test]
         public void ManyFloatingPoints()
         {
-            CalculatorController.Dispatcher(ref s, ",");
-            CalculatorController.Dispatcher(ref s, ",");
-            CalculatorController.Dispatcher(ref s, ",");
-            CalculatorController.Dispatcher(ref s, ",");
-            Assert.AreEqual("0,", s.RightOperand);
+            _c.Dispatch(",");
+            _c.Dispatch(",");
+            _c.Dispatch(",");
+            Assert.AreEqual("0,", _c.UiText);
         }
 
         [Test]
         public void WithLeadingZeros()
         {
-            CalculatorController.Dispatcher(ref s, "0");
-            CalculatorController.Dispatcher(ref s, "0");
-            CalculatorController.Dispatcher(ref s, "0");
-            CalculatorController.Dispatcher(ref s, "3");
-            Assert.AreEqual("3", s.RightOperand);
+            _c.Dispatch("0");
+            _c.Dispatch("0");
+            _c.Dispatch("0");
+            _c.Dispatch("3");
+            Assert.AreEqual("3", _c.UiText);
         }
     }
 }

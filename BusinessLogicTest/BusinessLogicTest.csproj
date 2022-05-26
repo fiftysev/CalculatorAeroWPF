@@ -43,8 +43,12 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="BinaryOperations.cs" />
+        <Compile Include="ClearDataOperations.cs" />
         <Compile Include="Digits.cs" />
+        <Compile Include="MemoryOperations.cs" />
+        <Compile Include="OutputCasesTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="UnaryOperations.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\CalculatorApp\CalculatorApp.csproj">
