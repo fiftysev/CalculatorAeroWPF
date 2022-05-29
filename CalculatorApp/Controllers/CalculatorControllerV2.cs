@@ -179,9 +179,10 @@ namespace CalculatorApp.Controllers
             {
                 case "MS":
                     _s.Memory = _s.UserInput;
+                    _s.Input.Value = null;
                     break;
                 case "MR":
-                    _s.Input.Value = _s.UserInput = _s.Memory;
+                    if(_s.Memory is not null) _s.Input.Value = _s.UserInput = _s.Memory;
                     break;
                 case "MC":
                     _s.Memory = null;
@@ -191,12 +192,14 @@ namespace CalculatorApp.Controllers
                     _s.Memory =
                         (Convert.ToDouble(_s.Memory) + Convert.ToDouble(_s.UserInput)).ToString(CultureInfo
                             .CurrentCulture);
+                    _s.Input.Value = null;
                     break;
                 case "M-":
                     if (_s.Memory is null) return;
                     _s.Memory =
                         (Convert.ToDouble(_s.Memory) - Convert.ToDouble(_s.UserInput)).ToString(CultureInfo
                             .CurrentCulture);
+                    _s.Input.Value = null;
                     break;
             }
         }
@@ -218,7 +221,6 @@ namespace CalculatorApp.Controllers
                 case "C":
                     _s.Buffer = new Operand();
                     _s.History = new History();
-                    _s.Memory = null;
                     _s.Operation = null;
                     _s.Input.Value = _s.UserInput = "0";
                     break;

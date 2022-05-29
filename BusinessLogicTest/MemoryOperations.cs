@@ -50,5 +50,36 @@ namespace BusinessLogicTest
 
             Assert.AreEqual("-4", _c.UiText);
         }
+
+        [Test]
+        public void ClearDataAndReadFromMemory()
+        {
+            _c.Dispatch("5");
+            _c.Dispatch("MS");
+            _c.Dispatch("C");
+            Assert.AreEqual("0", _c.UiText);
+            
+            _c.Dispatch("MR"); 
+            Assert.AreEqual("5", _c.UiText);
+        }
+
+        [Test]
+        public void TryInputAfterMemoryOperation()
+        {
+            _c.Dispatch("12");
+            _c.Dispatch("MS");
+            _c.Dispatch("5");
+            
+            Assert.AreEqual("5", _c.UiText);
+            
+            _c.Dispatch("M+");
+            _c.Dispatch("2");
+            
+            Assert.AreEqual("2", _c.UiText);
+            
+            _c.Dispatch("MR");
+            
+            Assert.AreEqual("17", _c.UiText);
+        }
     }
 }
