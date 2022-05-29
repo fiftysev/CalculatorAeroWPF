@@ -8,7 +8,7 @@
         ResizeMode="NoResize"
         Background="AliceBlue"
         KeyDown="Window_KeyDown"
-        Title="Calculator" Height="325" Width="225">
+        Title="Calculator" Height="340" Width="235">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Style.Triggers>
