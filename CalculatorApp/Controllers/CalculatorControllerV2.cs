@@ -218,7 +218,6 @@ namespace CalculatorApp.Controllers
                 case "C":
                     _s.Buffer = new Operand();
                     _s.History = new History();
-                    _s.Memory = null;
                     _s.Operation = null;
                     _s.Input.Value = _s.UserInput = "0";
                     break;
