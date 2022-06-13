@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace CalculatorApp
 {
    public static class Utils
@@ -33,6 +32,19 @@ namespace CalculatorApp
          };
 
          return type;
+      }
+
+      public static string WrapUnaryOperationForLogging(string operand, string operation)
+      {
+         var res = operation switch
+         {
+            "1/x" => $"reciproc({operand})",
+            "√" => $"sqrt({operand})",
+            "±" => "",
+            _ => ""
+         };
+
+         return res;
       }
    } 
 }

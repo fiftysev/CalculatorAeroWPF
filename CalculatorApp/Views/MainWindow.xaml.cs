@@ -39,6 +39,7 @@ namespace CalculatorApp.Views
             {
                 _controller.Dispatch(content);
                 NumInput.Text = _controller.UiText;
+                HistoryLabel.Text = _controller.Log;
             }
             catch (KeyNotFoundException keyNotFoundException)
             {

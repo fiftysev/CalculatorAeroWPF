@@ -8,7 +8,12 @@
         ResizeMode="NoResize"
         Background="AliceBlue"
         KeyDown="Window_KeyDown"
-        Title="Calculator" Height="340" Width="235">
+        Title="Calculator"
+        MinHeight="340" 
+        MinWidth="235"
+        MaxHeight="370"
+        MaxWidth="270"
+        >
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Style.Triggers>
@@ -17,30 +22,30 @@
             </Style.Triggers>
         </Style>
         <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Height" Value="24"/>
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="24" />
         </Style>
     </Window.Resources>
     <StackPanel>
         <Menu x:Name="Menu" Background="White">
             <MenuItem Header="Вид">
-                <MenuItem Header="Обычный" IsChecked="True"/>
+                <MenuItem Header="Обычный" IsChecked="True" />
                 <MenuItem Header="Инженерный" />
                 <MenuItem Header="Программист" />
                 <MenuItem Header="Статистика" />
-                <Separator/>
-                <MenuItem Header="Журнал" IsCheckable="True"/>
-                <MenuItem Header="Группировка цифр по разрядам" IsCheckable="True"/>
-                <Separator/>
+                <Separator />
+                <MenuItem Header="Журнал" IsCheckable="True" />
+                <MenuItem Header="Группировка цифр по разрядам" IsCheckable="True" />
+                <Separator />
                 <MenuItem Header="Обычный" />
                 <MenuItem Header="Преобразование единиц" />
                 <MenuItem Header="Вычисление даты" />
                 <MenuItem Header="Листы">
-                    <MenuItem Header="Ипотека"/>
-                    <MenuItem Header="Автолизинг"/>
-                    <MenuItem Header="Экономия (миль/галлон)"/>
-                    <MenuItem Header="Экономия топлива (л/100 км)"/>
+                    <MenuItem Header="Ипотека" />
+                    <MenuItem Header="Автолизинг" />
+                    <MenuItem Header="Экономия (миль/галлон)" />
+                    <MenuItem Header="Экономия топлива (л/100 км)" />
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Правка">
@@ -60,16 +65,25 @@
                 <MenuItem Header="О программе" />
             </MenuItem>
         </Menu>
-        <Label x:Name="History" HorizontalAlignment="Right" />
-        <TextBox
-            x:Name="NumInput"
-            Height="60"
-            TextAlignment="Right"
-            VerticalContentAlignment="Bottom"
-            FontSize="18"
-            Margin="7.5 2.5 7.5 0"
-            Text="0"
-            IsReadOnly="True" />
+        <StackPanel Margin="7.5">
+            <TextBlock
+                x:Name="HistoryLabel"
+                Height="24"
+                Background="White"
+                TextAlignment="Right"
+                TextWrapping="NoWrap"
+                ClipToBounds="False"
+                />
+            <TextBox
+                x:Name="NumInput"
+                Height="60"
+                TextAlignment="Right"
+                VerticalContentAlignment="Bottom"
+                FontSize="24"
+                Text="0"
+                BorderThickness="1 0 1 1"
+                IsReadOnly="True" />
+        </StackPanel>
         <Grid MinWidth="200" MinHeight="185" Margin="7.5" x:Name="RootLayout">
             <Grid.RowDefinitions>
                 <RowDefinition />

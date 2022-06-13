@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace CalculatorApp.Models
@@ -8,10 +9,17 @@ namespace CalculatorApp.Models
         public Operand Input;
         public Operand Buffer;
         public string Operation;
-
+       
         public string UserInput;
         public string Memory;
         public History History;
+        
+        public Stack<string> Log;
+
+        public bool LastInputInLogIsBinaryOperation()
+        {
+            return Utils.GetOperationType(Log.Peek()) == Utils.CalculatorOperationType.Binary;
+        }
     }
 
     public struct History

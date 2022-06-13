@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows;
+using System.Linq;
 using CalculatorApp.Models;
 
 namespace CalculatorApp.Controllers
@@ -9,10 +10,11 @@ namespace CalculatorApp.Controllers
     {
         private CalculatorState _s;
         public string UiText => _s.UserInput;
+        public string Log => string.Join(" ", _s.Log.Reverse().ToArray());
 
         public CalculatorController()
         {
-            _s = new CalculatorState();
+            _s = new CalculatorState{Log = new Stack<string>()};
         }
 
         public CalculatorController(ref CalculatorState state)
@@ -37,6 +39,7 @@ namespace CalculatorApp.Controllers
                     if (_s.Input.Value is null or "0" || _s.Input.IsOutput || _s.Input.IsModifiedByUnary)
                     {
                         _s.Input.Value = payload;
+                        _s.Log.Clear();
                         _s.Input.IsOutput = false;
                         _s.Input.IsModifiedByUnary = false;
                     }
@@ -57,9 +60,18 @@ namespace CalculatorApp.Controllers
                         case (true, false):
                             _s.Buffer.Value = _s.Input.Value;
                             _s.Operation = payload;
+                            
+                            _s.Log.Push(_s.Input.Value);
+                            _s.Log.Push(_s.Operation);
+                            
                             _s.Input.Value = null;
                             break;
                         case (false, true):
+                            if (_s.LastInputInLogIsBinaryOperation() && _s.Log.Peek() != payload)
+                            {
+                                _s.Log.Pop();
+                                _s.Log.Push(payload);
+                            }
                             _s.Operation = payload;
                             break;
                         case (false, false):
@@ -70,6 +82,9 @@ namespace CalculatorApp.Controllers
                             }
 
                             _s.Operation = payload;
+                            _s.Log.Push(_s.Input.Value);
+                            _s.Log.Push(payload);
+
                             _s.UserInput = _s.Buffer.Value;
                             _s.Input.Value = null;
                             break;
@@ -77,8 +92,18 @@ namespace CalculatorApp.Controllers
 
                     break;
                 case Utils.CalculatorOperationType.Unary:
+                    if (string.IsNullOrEmpty(_s.Input.Value) && !string.IsNullOrEmpty(_s.Buffer.Value))
+                        _s.Input.Value = _s.Buffer.Value;
                     if (!string.IsNullOrEmpty(_s.Input.Value))
+                    {
+                        var logValue = _s.Log.Count > 0 && !_s.LastInputInLogIsBinaryOperation()
+                            ? _s.Log.Pop()
+                            : _s.Input.Value;
+                        var wrapForLog = Utils.WrapUnaryOperationForLogging(logValue, payload);
+                        if (!string.IsNullOrEmpty(wrapForLog)) _s.Log.Push(wrapForLog);
                         _s.Input.Value = UnaryActionReducer(_s.Input.Value, payload);
+                    }
+                        
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
@@ -221,6 +246,7 @@ namespace CalculatorApp.Controllers
                 case "C":
                     _s.Buffer = new Operand();
                     _s.History = new History();
+                    _s.Log.Clear();
                     _s.Operation = null;
                     _s.Input.Value = _s.UserInput = "0";
                     break;
@@ -261,7 +287,7 @@ namespace CalculatorApp.Controllers
                         _s.Operation = null;
                         break;
                 }
-
+                _s.Log.Clear();
                 break;
             }
         }
