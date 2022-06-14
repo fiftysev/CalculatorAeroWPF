@@ -108,6 +108,8 @@ namespace CalculatorApp.Controllers
                     _s.Input.IsModifiedByUnary = true;
                     break;
                 case Utils.CalculatorOperationType.Percent:
+                    if (!string.IsNullOrEmpty(_s.Buffer.Value) && string.IsNullOrEmpty(_s.Input.Value) && !string.IsNullOrEmpty(_s.Operation))
+                        _s.Input.Value = _s.Buffer.Value;
                     _s.Input.Value = PercentActionReducer(_s.Buffer.Value, _s.Input.Value);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
