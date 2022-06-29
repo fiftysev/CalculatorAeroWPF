@@ -40,7 +40,7 @@ namespace CalculatorApp
          {
             "1/x" => $"reciproc({operand})",
             "√" => $"sqrt({operand})",
-            "±" => "",
+            "±" => $"negate({operand}",
             _ => ""
          };
 

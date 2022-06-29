@@ -39,7 +39,6 @@ namespace CalculatorApp.Controllers
                     if (_s.Input.Value is null or "0" || _s.Input.IsOutput || _s.Input.IsModifiedByUnary)
                     {
                         _s.Input.Value = payload;
-                        _s.Log.Clear();
                         _s.Input.IsOutput = false;
                         _s.Input.IsModifiedByUnary = false;
                     }
@@ -94,6 +93,7 @@ namespace CalculatorApp.Controllers
                 case Utils.CalculatorOperationType.Unary:
                     if (string.IsNullOrEmpty(_s.Input.Value) && !string.IsNullOrEmpty(_s.Buffer.Value))
                         _s.Input.Value = _s.Buffer.Value;
+                    
                     if (!string.IsNullOrEmpty(_s.Input.Value))
                     {
                         var logValue = _s.Log.Count > 0 && !_s.LastInputInLogIsBinaryOperation()
@@ -110,7 +110,10 @@ namespace CalculatorApp.Controllers
                 case Utils.CalculatorOperationType.Percent:
                     if (!string.IsNullOrEmpty(_s.Buffer.Value) && string.IsNullOrEmpty(_s.Input.Value) && !string.IsNullOrEmpty(_s.Operation))
                         _s.Input.Value = _s.Buffer.Value;
-                    _s.Input.Value = PercentActionReducer(_s.Buffer.Value, _s.Input.Value);
+                    
+                    var res = PercentActionReducer(_s.Buffer.Value, _s.Input.Value);
+                    _s.Input.Value = res;
+                    _s.Log.Push(res);
                     _s.UserInput = _s.Input.Value;
                     _s.Input.IsModifiedByUnary = true;
                     break;
@@ -281,12 +284,14 @@ namespace CalculatorApp.Controllers
                                              !string.IsNullOrEmpty(_s.History.Operation):
                         var operation = _s.Operation ?? _s.History.Operation;
                         if (!_s.Input.IsOutput) _s.History.Operand = _s.Input.Value;
+                        
                         _s.Input.Value = BinaryActionReducer(_s.Buffer.Value, _s.Input.Value, operation);
                         _s.History.Operation = operation;
                         _s.UserInput = _s.Input.Value;
                         _s.Input.IsOutput = true;
                         _s.Buffer = new Operand();
                         _s.Operation = null;
+                        
                         break;
                 }
                 _s.Log.Clear();
