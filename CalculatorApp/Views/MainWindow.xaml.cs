@@ -50,49 +50,54 @@ namespace CalculatorApp.Views
                 MessageBox.Show(invalidOperationException.Message);
                 _controller.ResetState();
             }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            string operation;
-            if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
+            var operation = e.Key switch
             {
-                operation = e.Key switch
-                {
-                    Key.D8 => "*",
-                    Key.OemPlus => "+",
-                    _ => ""
-                };
-            }
-            else
-                operation = e.Key switch
-                {
-                    Key.Back => "🠔",
-                    Key.Return or Key.OemPlus => "=",
-                    Key.Escape => "C",
-                    Key.Delete => "CE",
-                    Key.D0 or Key.NumPad0 => "0",
-                    Key.D1 or Key.NumPad1 => "1",
-                    Key.D2 or Key.NumPad2 => "2",
-                    Key.D3 or Key.NumPad3 => "3",
-                    Key.D4 or Key.NumPad4 => "4",
-                    Key.D5 or Key.NumPad5 => "5",
-                    Key.D6 or Key.NumPad6 => "6",
-                    Key.D7 or Key.NumPad7 => "7",
-                    Key.D8 or Key.NumPad8 => "8",
-                    Key.D9 or Key.NumPad9 => "9",
-                    Key.Multiply => "*",
-                    Key.Add => "+",
-                    Key.Subtract or Key.OemMinus => "-",
-                    Key.Decimal or Key.OemComma or Key.OemPeriod => ",",
-                    Key.Divide or Key.OemQuestion => "/",
-                    _ => ""
-                };
+                Key.Back => "🠔",
+                Key.OemPlus when e.KeyboardDevice.Modifiers == ModifierKeys.Shift => "+",
+                Key.Return or Key.OemPlus => "=",
+                Key.Escape => "C",
+                Key.Delete => "CE",
+                Key.D0 or Key.NumPad0 => "0",
+                Key.D1 or Key.NumPad1 => "1",
+                Key.D2 or Key.NumPad2 when e.KeyboardDevice.Modifiers == ModifierKeys.Shift => "√",
+                Key.D2 or Key.NumPad2 => "2",
+                Key.D3 or Key.NumPad3 => "3",
+                Key.D4 or Key.NumPad4 => "4",
+                Key.D5 or Key.NumPad5 when e.KeyboardDevice.Modifiers == ModifierKeys.Shift => "%",
+                Key.D5 or Key.NumPad5 => "5",
+                Key.D6 or Key.NumPad6 => "6",
+                Key.D7 or Key.NumPad7 => "7",
+                Key.D8 or Key.NumPad8 when e.KeyboardDevice.Modifiers == ModifierKeys.Shift => "*",
+                Key.D8 or Key.NumPad8 => "8",
+                Key.D9 or Key.NumPad9 => "9",
+                Key.Multiply => "*",
+                Key.Add => "+",
+                Key.Subtract or Key.OemMinus => "-",
+                Key.Decimal or Key.OemComma or Key.OemPeriod => ",",
+                Key.Divide or Key.OemQuestion => "/",
+                Key.M when e.KeyboardDevice.Modifiers == ModifierKeys.Control => "MS",
+                Key.P when e.KeyboardDevice.Modifiers == ModifierKeys.Control => "M+",
+                Key.Q when e.KeyboardDevice.Modifiers == ModifierKeys.Control => "M-",
+                Key.R when e.KeyboardDevice.Modifiers == ModifierKeys.Control => "MR",
+                Key.L when e.KeyboardDevice.Modifiers == ModifierKeys.Control => "MC",
+                Key.R => "1/x",
+                Key.F9 => "±",
+                _ => null
+            };
 
             try
             {
                 _controller.Dispatch(operation);
                 NumInput.Text = _controller.UiText;
+                HistoryLabel.Text = _controller.Log;
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
@@ -102,6 +107,10 @@ namespace CalculatorApp.Views
             {
                 MessageBox.Show(invalidOperationException.Message);
                 _controller.ResetState();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
             }
         }
 

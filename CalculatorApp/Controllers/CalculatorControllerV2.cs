@@ -128,6 +128,8 @@ namespace CalculatorApp.Controllers
                     break;
                 case Utils.CalculatorOperationType.ErrorType:
                     break;
+                default:
+                    throw new Exception("Invalid operation!");
             }
         }
 
